@@ -13,6 +13,26 @@ const config: Config = {
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
+      colors: {
+        primary: {
+          "marine-blue": "hsl(213, 96%, 18%)",
+          "purplish-blue": "hsl(243, 100%, 62%)",
+          "pastel-blue": "hsl(228, 100%, 84%)",
+          "light-blue": "hsl(206, 94%, 87%)",
+          "strawberru-red": "hsl(354, 84%, 57%)",
+          main: "hsl(224, 100%, 58%)",
+        },
+        neutral: {
+          "cool-gray": "hsl(231, 11%, 63%)",
+          "light-gray": "hsl(229, 24%, 87%)",
+          magnolia: "hsl(217, 100%, 97%)",
+          alabaster: "hsl(231, 100%, 99%)",
+        },
+      },
+      screens: {
+        mobile: "375px",
+        desktop: "1440px",
+      },
     },
   },
   plugins: [],

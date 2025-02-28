@@ -1,0 +1,104 @@
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+}
+
+model Card {
+  founder     BigInt?
+  id          BigInt   @id @default(autoincrement())
+  projectId   BigInt?
+  description String?  @db.Text
+  image       String?
+  name        String?
+  members     Bytes?
+  tags        Bytes?
+  users       User?    @relation(fields: [founder], references: [id])
+  projects    Project? @relation(fields: [projectId], references: [id])
+
+  @@map("cards")
+}
+
+model Project {
+  founder     BigInt?
+  id          BigInt  @id @default(autoincrement())
+  description String? @db.Text
+  name        String
+  members     Bytes?
+  users       User?   @relation(fields: [founder], references: [id])
+
+  cards Card[]
+
+  @@map("projects")
+}
+
+model User {
+  id            BigInt       @id @default(autoincrement())
+  name          String?
+  email         String?
+  emailVerified DateTime?
+  image         String?
+  password      String?
+  username      String?
+  roles         users_roles?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  projects Project[]
+  cards    Card[]
+  accounts Account[]
+  sessions Session[]
+
+  @@map("users")
+}
+
+model Account {
+  userId            BigInt
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  users             User?   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model Session {
+  id           BigInt   @id @default(autoincrement())
+  sessionToken String   @unique
+  userId       BigInt
+  expires      DateTime
+  users        User?    @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("sessions")
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+  @@map("verification_tokens")
+}
+
+enum users_roles {
+  ADMIN
+  USER
+}
