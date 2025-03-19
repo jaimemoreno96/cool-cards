@@ -4,31 +4,31 @@ datasource db {
 }
 
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 model Card {
-  founder     BigInt?
-  id          BigInt   @id @default(autoincrement())
-  projectId   BigInt?
+  founder     String?
+  id          String   @id @default(cuid())
+  projectId   String?
   description String?  @db.Text
   image       String?
   name        String?
   members     Bytes?
   tags        Bytes?
-  users       User?    @relation(fields: [founder], references: [id])
-  projects    Project? @relation(fields: [projectId], references: [id])
+  user        User?    @relation(fields: [founder], references: [id])
+  project     Project? @relation(fields: [projectId], references: [id])
 
   @@map("cards")
 }
 
 model Project {
-  founder     BigInt?
-  id          BigInt  @id @default(autoincrement())
+  founder     String?
+  id          String  @id @default(cuid())
   description String? @db.Text
   name        String
   members     Bytes?
-  users       User?   @relation(fields: [founder], references: [id])
+  user        User?   @relation(fields: [founder], references: [id])
 
   cards Card[]
 
@@ -36,9 +36,9 @@ model Project {
 }
 
 model User {
-  id            BigInt       @id @default(autoincrement())
+  id            String       @id @default(cuid())
   name          String?
-  email         String?
+  email         String?      @unique
   emailVerified DateTime?
   image         String?
   password      String?
@@ -56,32 +56,34 @@ model User {
 }
 
 model Account {
-  userId            BigInt
-  type              String
-  provider          String
-  providerAccountId String
-  refresh_token     String?
-  access_token      String?
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?
-  session_state     String?
-  users             User?   @relation(fields: [userId], references: [id])
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@id([provider, providerAccountId])
+  @@unique([provider, providerAccountId])
   @@map("accounts")
 }
 
 model Session {
-  id           BigInt   @id @default(autoincrement())
+  id           String   @id @default(cuid())
   sessionToken String   @unique
-  userId       BigInt
+  userId       String
   expires      DateTime
-  users        User?    @relation(fields: [userId], references: [id])
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

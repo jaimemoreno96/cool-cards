@@ -8,6 +8,7 @@ import { Input } from "@/app/(auth)/sign-in/components/input";
 import { PasswordInput } from "@/app/(auth)/sign-in/components/password-input";
 import { Button } from "@/app/(auth)/components/button";
 import { ButtonType } from "@/app/(auth)/components/button/button";
+import { signIn } from "@/app/auth";
 
 export interface SignInFormInputs {
   email: string;
@@ -25,12 +26,17 @@ const SignIn = () => {
     console.log(data);
   };
 
+  const onSignUp = async () => {
+    "use server";
+    await signIn("google");
+  }
+
   return (
     <>
       <h3 className="text-sm font-normal mb-4 text-center text-black">
         Sign in to your account
       </h3>
-      <form className="flex flex-col gap-3" onSubmit={handleSubmit(onSubmit)}>
+      <form className="flex flex-col gap-3" action={onSignUp} onSubmit={handleSubmit(onSubmit)}>
         <div className="block relative">
           <Label label="Email" name="email" />
           <Input
