@@ -1,10 +1,13 @@
-import Image from "next/image";
+import { redirect } from "next/navigation";
+import { cachedAuth } from "./lib/session";
 
-const Home = () => {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <p>Hello</p>
-    </main>
-  );
+const Home = async () => {
+  const session = await cachedAuth();
+  console.log("Session:", session);
+  const user = session?.user;
+  if (user) {
+    redirect("/projects");
+  }
+  redirect("/api/auth/signin?callbackUrl=/projects");
 };
 export default Home;

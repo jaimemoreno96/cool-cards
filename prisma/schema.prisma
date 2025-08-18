@@ -8,29 +8,53 @@ generator client {
 }
 
 model Card {
-  founder     String?
   id          String   @id @default(cuid())
-  projectId   String?
+  userId      String?
+  boardId     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
   description String?  @db.Text
   image       String?
   name        String?
-  members     Bytes?
-  tags        Bytes?
-  user        User?    @relation(fields: [founder], references: [id])
-  project     Project? @relation(fields: [projectId], references: [id])
+  members     Json?    @db.Json
+  tags        Json?    @db.Json
+  user        User?    @relation(fields: [userId], references: [id])
+  board       Board?   @relation(fields: [boardId], references: [id])
 
   @@map("cards")
 }
 
-model Project {
-  founder     String?
-  id          String  @id @default(cuid())
-  description String? @db.Text
+model Board {
+  id          String   @id @default(cuid())
+  userId      String?
+  projectId   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String?  @db.Text
+  image       String?
   name        String
-  members     Bytes?
-  user        User?   @relation(fields: [founder], references: [id])
+  members     Json?    @db.Json
+  favorite    Boolean  @default(false)
+  project     Project? @relation(fields: [projectId], references: [id])
+  user        User?    @relation(fields: [userId], references: [id])
 
   cards Card[]
+
+  @@map("boards")
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  userId      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  description String?  @db.Text
+  name        String
+  members     Json?    @db.Json
+  favorite    Boolean  @default(false)
+  user        User?    @relation(fields: [userId], references: [id])
+
+  boards Board[]
 
   @@map("projects")
 }
@@ -48,6 +72,7 @@ model User {
   updatedAt     DateTime     @updatedAt
 
   projects Project[]
+  boards   Board[]
   cards    Card[]
   accounts Account[]
   sessions Session[]

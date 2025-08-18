@@ -18,7 +18,7 @@ const Button = ({ buttonType, label, type }: ButtonProps) => {
   return (
     <button
       type={type}
-      className={`${bgColor} text-white w-max m-auto px-6 py-2 rounded text-sm font-normal`}>
+      className={`${bgColor} text-white w-max m-auto px-6 py-2 rounded-sm text-sm font-normal`}>
       {label}
     </button>
   );
