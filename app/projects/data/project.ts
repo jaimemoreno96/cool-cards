@@ -1,53 +1,35 @@
-"use server";
+"use client";
 
 import { cachedAuth } from "@/app/lib/session";
 import { Project } from "../lib/definitions";
 import { prisma } from "@/lib/prisma";
-import { projectDto } from "./dto/project";
+import { projectDto } from "../dto/project";
+import {
+  BaseResponse,
+  NewProjectResponse,
+  ProjectType,
+} from "../types/projects";
+import axios, { AxiosResponse } from "axios";
 
-export const createProject = async (data: Project) => {
+export const createProject = async (
+  userId: string,
+  data: Project
+): Promise<AxiosResponse<NewProjectResponse, any>> => {
   try {
-    const session = await cachedAuth();
-    console.log("Session:", session);
-    const user = session?.user;
+    const response = await axios.post<NewProjectResponse>(
+      "/api/projects", // Correct endpoint path
+      { ...data, userId }, // Data object (axios automatically stringifies)
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    const members = data.members?.split(",") || [];
-
-    const project = await prisma.project.create({
-      data: {
-        name: data.name,
-        description: data.description,
-        members: members,
-        userId: user?.id || "", // Ensure userId is set, fallback to empty string if user is not found
-      },
-    });
-
-    return projectDto(project);
+    return response;
   } catch (error) {
     console.error("Error creating project:", error);
     throw error; // Re-throw the error for further handling if needed
-  }
-};
-
-export const getProjects = async () => {
-  try {
-    const session = await cachedAuth();
-    console.log("Session:", session);
-    const user = session?.user;
-
-    const projects = await prisma.project.findMany({
-      where: {
-        userId: user?.id,
-      },
-    });
-
-    // Map the projects to a simpler object structure
-    const mappedProjects = projects.map(projectDto);
-
-    return mappedProjects;
-  } catch (error) {
-    console.log(error);
-    return [];
   }
 };
 
@@ -56,14 +38,20 @@ export const setFavoriteProject = async (
   favorite: boolean
 ) => {
   try {
-    await prisma.project.update({
-      where: {
-        id: projectId,
+    const response = await axios.put<BaseResponse>(
+      "/api/projects/favorite",
+      {
+        projectId,
+        favorite,
       },
-      data: {
-        favorite: favorite,
-      },
-    });
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response;
   } catch (error) {
     console.error("Error setting favorite project:", error);
     throw error; // Re-throw the error for further handling if needed

@@ -1,14 +1,17 @@
+import { projectDto } from "@/app/projects/dto/project";
+import { ProjectType } from "@/app/projects/types/projects";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    const project = await prisma.project.create({
+    const members = data.members?.split(",") || [];
+    const project: ProjectType = await prisma.project.create({
       data: {
         name: data.name,
         description: data.description,
-        members: data.members,
+        members: members,
         userId: data.userId,
       },
     });
@@ -19,7 +22,9 @@ export async function POST(request: Request) {
         { status: 500 }
       );
     }
-    return NextResponse.json(project, { status: 200 });
+    const mappedProject = projectDto(project);
+
+    return NextResponse.json({ project: mappedProject }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json(

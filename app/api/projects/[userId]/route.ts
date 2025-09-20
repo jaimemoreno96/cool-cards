@@ -1,4 +1,4 @@
-import { projectDto } from "@/app/projects/data/dto/project";
+import { projectDto } from "@/app/projects/dto/project";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -27,7 +27,7 @@ export async function GET(
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { error: "Failed to fetch user data" },
+      { error: "Failed to fetch projects" },
       { status: 500 }
     );
   }

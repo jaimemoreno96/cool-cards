@@ -1,21 +1,17 @@
 import Link from "next/link";
 
-import { Project as ProjectType } from "../lib/definitions";
-
 import { FavoriteButton } from "./";
+import { ProjectItemType } from "./ProjectsList";
 
 interface ProjectProps {
-  project: ProjectType & {
-    id: string;
-    favorite: boolean;
-  };
+  project: ProjectItemType;
 }
 
 const Project = ({ project }: ProjectProps) => {
   return (
     <div className="group relative p-4 border rounded-md shadow hover:shadow-lg transition cursor-pointer">
       <Link
-        href={`/projects/${project.id}`}
+        href={`/boards/${project.id}`}
         className="absolute inset-0 z-0"
         aria-label={`View project: ${project.name}`}
       />

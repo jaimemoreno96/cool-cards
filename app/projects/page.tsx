@@ -1,6 +1,7 @@
 import { NewProject, ProjectsList } from "./components";
 
 import { cachedAuth } from "../lib/session";
+import { redirect } from "next/navigation";
 
 const Projects = async () => {
   const session = await cachedAuth();
@@ -8,11 +9,7 @@ const Projects = async () => {
   const user = session?.user;
 
   if (!user) {
-    window.history.replaceState(
-      {},
-      "",
-      "api/auth/signin?callbackUrl=/projects"
-    );
+    redirect("api/auth/signin?callbackUrl=/projects");
   }
 
   return (

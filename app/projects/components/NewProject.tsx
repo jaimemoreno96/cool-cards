@@ -1,12 +1,10 @@
 "use client";
 
-import { use, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon } from "@heroicons/react/24/solid";
 import { CheckIcon, User } from "lucide-react";
-
-import { Project, projectSchema } from "../lib/definitions";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -29,14 +27,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { getMembersByEmail } from "../data/user";
 import { Badge } from "@/components/ui/badge";
-import { createProject } from "../data/project";
-import useSWR from "swr";
-import { useProjects } from "../hooks/useProjects";
-import { useMembers } from "../hooks/useMembers";
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
+import { getMembersByEmail } from "../data/user";
+import { createProject } from "../data/project";
+
+import { useProjects } from "../hooks/useProjects";
+
+import { Project, projectSchema } from "../lib/definitions";
+
+import { UserDtoType } from "../types/users";
+import { ProjectDtoType } from "../types/projects";
 
 interface NewProjectProps {
   userId: string;
@@ -54,18 +55,15 @@ const NewProject = ({ userId }: NewProjectProps) => {
     defaultValues,
   });
 
-  const [members, setMembers] = useState<any>([]);
+  const [members, setMembers] = useState<UserDtoType[]>([]);
 
-  const [selectedMembers, setSelectedMembers] = useState<any>([]);
+  const [selectedMembers, setSelectedMembers] = useState<UserDtoType[]>([]);
 
   const [open, setOpen] = useState(false);
 
   const { mutateProjects } = useProjects(userId);
 
-  const { mutateMembers } = useMembers();
-
   const onSubmit: SubmitHandler<Project> = async (data: Project) => {
-    console.log("Submitted Project Data:", data);
     const projectMembers: string[] = [];
     if (selectedMembers.length) {
       selectedMembers.forEach((member: any) => {
@@ -73,15 +71,22 @@ const NewProject = ({ userId }: NewProjectProps) => {
       });
     }
     data.members = projectMembers.join(",") || "";
-    const project = await createProject(data);
-    if (project) {
-      console.log("Created Project:", project);
-      console.log(form.getValues());
+    const response = await createProject(userId, data);
+    if (response.status === 200) {
+      mutateProjects(
+        (projects: ProjectDtoType[]) =>
+          projects
+            ? [...projects, response.data.project]
+            : [response.data.project],
+        false
+      );
       setOpen(false);
       form.reset(defaultValues);
       setSelectedMembers([]);
       setMembers([]);
+      return;
     }
+    mutateProjects();
   };
 
   const debounce = (func: Function, delay: number) => {
@@ -100,32 +105,16 @@ const NewProject = ({ userId }: NewProjectProps) => {
       return;
     }
 
-    // const members = await getMembersByEmail(value);
-    const members = await fetch("/api/users/members", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ value: value, userId: userId }),
-      })
-      console.log("Members:", members);
-       
+    const response = await getMembersByEmail(value, userId);
 
-      mutateMembers(
-        async (currentData: any) => {
-          if (!currentData) return currentData
-          return {
-            ...currentData,
-            data: members,
-          }
-        },
-        { revalidate: false }
-      )
+    console.log("Response: ", response.data.members);
 
+    if (response.status === 200) {
+      setMembers(response.data.members);
+      return;
+    }
 
-
-    // Update the members state with the filtered members
-    setMembers(members);
+    setMembers([]);
   };
 
   const handleMemberSelect = (member: any) => {
@@ -164,7 +153,10 @@ const NewProject = ({ userId }: NewProjectProps) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="w-full h-full cursor-pointer" variant="outline">
+        <Button
+          className="w-full h-full shadow hover:shadow-lg transition cursor-pointer"
+          variant="outline"
+        >
           <PlusIcon className="w-4 h-4 text-black mr-2" />
           New Project
         </Button>
@@ -227,9 +219,9 @@ const NewProject = ({ userId }: NewProjectProps) => {
                             handleMemberChange(e);
                           }}
                         />
-                        {members.length > 0 && (
+                        {members?.length > 0 && (
                           <div className="absolute z-10 w-full mt-2 bg-white border rounded-md shadow-lg">
-                            {members.map((member: any) => (
+                            {members.map((member: UserDtoType) => (
                               <div
                                 className="p-1 cursor-pointer hover:bg-gray-100"
                                 key={member.id}

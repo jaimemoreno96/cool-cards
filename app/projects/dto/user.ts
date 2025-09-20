@@ -1,4 +1,6 @@
-export const userDto = (user: any) => {
+import { UserDtoType, UserType } from "../types/users";
+
+export const userDto = (user: UserType): UserDtoType => {
     return {
         id: user.id,
         name: user.name,

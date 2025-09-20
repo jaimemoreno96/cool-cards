@@ -1,4 +1,5 @@
-import { userDto } from "@/app/projects/data/dto/user";
+import { userDto } from "@/app/projects/dto/user";
+import { UserType } from "@/app/projects/types/users";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
     // Map the members to a simpler object structure
     const mappedMembers = members.map(userDto);
 
-    return NextResponse.json(mappedMembers, { status: 200 });
+    return NextResponse.json({ members: mappedMembers , total: members.length}, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json(

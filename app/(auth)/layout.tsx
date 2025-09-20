@@ -1,11 +1,10 @@
 import Image from "next/image";
+import { redirect } from "next/navigation";
 
-import { signIn } from "next-auth/react";
+import { cachedAuth } from "../lib/session";
+import ProvidersButtons from "./components/providers-buttons";
 
 import logo from "../../public/cool-cards-logo.png";
-import googleIcon from "./assets/google.svg";
-import githubIcon from "./assets/github.svg";
-import { cachedAuth } from "../lib/session";
 
 const AuthLayout = async ({
   children,
@@ -17,7 +16,7 @@ const AuthLayout = async ({
   const user = session?.user;
 
   if (user) {
-    window.history.replaceState({}, "", "/projects");
+    redirect("/projects");
   }
 
   return (
@@ -32,24 +31,7 @@ const AuthLayout = async ({
         />
         {children}
         <p className="text-sm text-center mt-6">Or sign in with</p>
-        <div className="flex items-center justify-center gap-4 mt-4">
-          <button
-            type="button"
-            onClick={() => {
-              signIn("google");
-            }}
-          >
-            <Image src={googleIcon} alt="google" width={40} height={40} />
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              signIn("github");
-            }}
-          >
-            <Image src={githubIcon} alt="github" width={40} height={40} />
-          </button>
-        </div>
+        <ProvidersButtons />
       </div>
     </div>
   );

@@ -13,7 +13,12 @@ const FavoriteButton = ({ projectId, isFavorite }: FavoriteButtonProps) => {
   const [favorite, setFavorite] = useState(isFavorite);
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    await setFavoriteProject(projectId, !isFavorite);
+    const response = await setFavoriteProject(projectId, !isFavorite);
+    if (response.status !== 200) {
+      // Handle error (e.g., show a notification)
+      console.error("Failed to update favorite status");
+      return;
+    }
     setFavorite(!favorite);
   };
 

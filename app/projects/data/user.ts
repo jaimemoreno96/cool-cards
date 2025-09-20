@@ -1,30 +1,23 @@
-"use server";
+"use client";
 
-import { prisma } from "@/lib/prisma";
-import { userDto } from "./dto/user";
-import { cachedAuth } from "@/app/lib/session";
+import axios, { AxiosResponse } from "axios";
+import { UsersResponse } from "../types/users";
 
-export const getMembersByEmail = async (value: string) => {
+export const getMembersByEmail = async (value: string, userId: string): Promise<AxiosResponse<UsersResponse, any>> => {
   try {
-    const session = await cachedAuth();
-    console.log("Session:", session);
-    const user = session?.user;
-
-    const members = await prisma.user.findMany({
-      where: {
-        email: {
-          contains: value,
-          not: user?.email,
+    const response = await axios.post<UsersResponse>(
+      "/api/users/members", // Correct endpoint path
+      { value, userId }, // Data object (axios automatically stringifies)
+      {
+        headers: {
+          "Content-Type": "application/json",
         },
-      },
-    });
-
-    // Map the members to a simpler object structure
-    const mappedMembers = members.map(userDto);
-
-    return mappedMembers;
+      }
+    );
+    
+    return response;
   } catch (error) {
-    console.log(error);
-    return [];
+    console.error("Error fetching members:", error);
+    throw new Error("Failed to fetch members");
   }
 };

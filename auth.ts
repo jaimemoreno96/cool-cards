@@ -3,7 +3,7 @@ import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import Credentials from "next-auth/providers/credentials";
 import { ZodError } from "zod";
-import { v4 as uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from "uuid";
 
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
@@ -48,7 +48,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           }
 
           return null;
-          
         } catch (error) {
           console.log(error);
 
@@ -67,7 +66,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, user, account }: any) {
       // console.log(user, token, account);
       if (account?.provider === "credentials") {
-        const sessionToken =  uuidv4();
+        const sessionToken = uuidv4();
         const expires = Date.now() + 1000 * 60 * 60 * 24 * 30; // 30 days
 
         const sessionExists = await prisma.session.findFirst({
@@ -79,7 +78,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           console.log("Session already exists, updating expiration date");
           // If the session already exists, update the expiration date
           // and store the session token in the JWT
-          
+
           await prisma.session.update({
             where: {
               id: sessionExists.id,
@@ -87,14 +86,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             data: {
               expires: new Date(expires),
             },
-          })
+          });
           token.sessionToken = sessionExists.sessionToken;
           return token;
         }
         console.log("Creating new session");
         // Create a new session
         // and store the session token in the JWT
-        // and the session in the database 
+        // and the session in the database
 
         const session = await prisma.session.create({
           data: {
@@ -126,10 +125,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   jwt: {
-    async encode({ token }: { token?: any }) { 
+    async encode({ token }: { token?: any }) {
       console.log("Token:", token);
       return token?.sessionToken as unknown as string;
-    }
+    },
   },
   pages: {
     signIn: "/sign-in",

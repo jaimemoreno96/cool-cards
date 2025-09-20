@@ -1,16 +1,14 @@
 "use client";
-import useSWR from "swr";
+
 import { Project as ProjectType } from "../lib/definitions";
 import { Project } from "./";
 import { useProjects } from "../hooks/useProjects";
-
-const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 interface ProjectsListProps {
   userId: string;
 }
 
-interface ProjectItemType extends ProjectType {
+export interface ProjectItemType extends ProjectType {
   id: string;
   favorite: boolean;
 }
@@ -23,14 +21,9 @@ const ProjectsList = ({ userId }: ProjectsListProps) => {
 
   return (
     <>
-      {projects.map(
-        (project: ProjectType & { id: string; favorite: boolean }) => (
-          <Project
-            key={project.id}
-            project={project as ProjectType & { id: string; favorite: boolean }}
-          />
-        )
-      )}
+      {projects.map((project: ProjectItemType) => (
+        <Project key={project.id} project={project} />
+      ))}
     </>
   );
 };

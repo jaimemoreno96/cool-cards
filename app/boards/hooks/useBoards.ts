@@ -3,9 +3,9 @@ import axios from "axios";
 
 const fetcher = (url: string) => axios(url).then((res) => res.data);
 
-export const useMembers = () => {
+export const useBoards = (projectId: string) => {
   const { data, error, isLoading, mutate } = useSWR(
-    `/api/users/members`,
+    `/api/boards/${projectId}`,
     fetcher,
     {
       revalidateOnFocus: false,
@@ -14,9 +14,9 @@ export const useMembers = () => {
   );
 
   return {
-    membersData: data,
-    membersError: error,
-    membersIsLoading: isLoading,
-    mutateMembers: mutate,
+    boards: data,
+    boardsError: error,
+    boardsIsLoading: isLoading,
+    mutateBoards: mutate,
   };
 };
