@@ -8,19 +8,24 @@ export async function POST(request: Request) {
     const data = await request.json();
 
     console.log("Request Data:", data);
-    
 
     const members = await prisma.user.findMany({
       where: {
-        email: {
-          contains: data.value,    
-        },
-        name: {
-          contains: data.value,
-        },
+        OR: [
+          {
+            email: {
+              contains: data.value,
+            },
+          },
+          {
+            name: {
+              contains: data.value,
+            },
+          },
+        ],
         NOT: {
-            id: data.userId, // Exclude the current user
-        }
+          id: data.userId, // Exclude the current user
+        },
       },
     });
 
@@ -31,7 +36,10 @@ export async function POST(request: Request) {
     // Map the members to a simpler object structure
     const mappedMembers = members.map(userDto);
 
-    return NextResponse.json({ members: mappedMembers , total: members.length}, { status: 200 });
+    return NextResponse.json(
+      { members: mappedMembers, total: members.length },
+      { status: 200 }
+    );
   } catch (error) {
     console.log(error);
     return NextResponse.json(

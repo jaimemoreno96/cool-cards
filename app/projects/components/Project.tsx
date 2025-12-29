@@ -9,7 +9,7 @@ interface ProjectProps {
 
 const Project = ({ project }: ProjectProps) => {
   return (
-    <div className="group relative p-4 border rounded-md shadow hover:shadow-lg transition cursor-pointer">
+    <div className="group relative p-4 border rounded-md shadow hover:shadow-lg transition cursor-pointer h-auto bg-white">
       <Link
         href={`/boards/${project.id}`}
         className="absolute inset-0 z-0"
@@ -21,9 +21,6 @@ const Project = ({ project }: ProjectProps) => {
         </h3>
         <FavoriteButton projectId={project.id} isFavorite={project.favorite} />
       </div>
-      <p className="relative z-10 text-sm text-gray-600 mt-2 line-clamp-2 pointer-events-none">
-        {project.description}
-      </p>
     </div>
   );
 };

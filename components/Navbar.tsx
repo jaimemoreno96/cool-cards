@@ -1,7 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
 
-import logo from "../public/cool-cards-logo.png";
 import { signOut } from "@/auth";
 import { Button } from "./ui/button";
 
@@ -11,7 +10,7 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-2xl font-bold">
           <Link href="/">
-            <Image src={logo} width={120} alt="logo" className="m-auto" />
+            <Image src="/cool-cards-logo.png" width={120} height={40} alt="logo" className="m-auto" />
           </Link>
         </div>
         <ul className="flex space-x-4">

@@ -1,15 +1,8 @@
 "use client";
 
-import { cachedAuth } from "@/app/lib/session";
-import { Project } from "../lib/definitions";
-import { prisma } from "@/lib/prisma";
-import { projectDto } from "../dto/project";
-import {
-  BaseResponse,
-  NewProjectResponse,
-  ProjectType,
-} from "../types/projects";
 import axios, { AxiosResponse } from "axios";
+import { Project } from "../lib/definitions";
+import { BaseResponse, NewProjectResponse } from "../types/projects";
 
 export const createProject = async (
   userId: string,

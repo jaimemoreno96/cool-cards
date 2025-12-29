@@ -1,4 +1,5 @@
 import { projectDto } from "@/app/projects/dto/project";
+import { ProjectType } from "@/app/projects/types/projects";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -10,7 +11,7 @@ export async function GET(
   console.log("User ID:", userId);
 
   try {
-    const projects = await prisma.project.findMany({
+    const projects: ProjectType[] = await prisma.project.findMany({
       where: {
         userId: userId as string,
       },

@@ -38,6 +38,7 @@ import { Project, projectSchema } from "../lib/definitions";
 
 import { UserDtoType } from "../types/users";
 import { ProjectDtoType } from "../types/projects";
+import { debounce } from "@/app/utils/debounce";
 
 interface NewProjectProps {
   userId: string;
@@ -89,16 +90,6 @@ const NewProject = ({ userId }: NewProjectProps) => {
     mutateProjects();
   };
 
-  const debounce = (func: Function, delay: number) => {
-    let timer: NodeJS.Timeout;
-    return function (...args: any[]) {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        func(...args);
-      }, delay);
-    };
-  };
-
   const getMembers = async (value: string) => {
     if (!value) {
       setMembers([]);
@@ -127,7 +118,7 @@ const NewProject = ({ userId }: NewProjectProps) => {
     setMembers([]);
   };
 
-  const handleMemberDeselect = (member: any) => {
+  const handleMemberDeselect = (member: UserDtoType) => {
     setSelectedMembers(selectedMembers.filter((m: any) => m.id !== member.id));
   };
 
@@ -154,7 +145,7 @@ const NewProject = ({ userId }: NewProjectProps) => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button
-          className="w-full h-full shadow hover:shadow-lg transition cursor-pointer"
+          className="w-full h-auto shadow hover:shadow-lg transition cursor-pointer"
           variant="outline"
         >
           <PlusIcon className="w-4 h-4 text-black mr-2" />
@@ -184,7 +175,7 @@ const NewProject = ({ userId }: NewProjectProps) => {
                   </FormItem>
                 )}
               />
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="description"
                 render={({ field }) => (
@@ -200,7 +191,7 @@ const NewProject = ({ userId }: NewProjectProps) => {
                     <FormMessage />
                   </FormItem>
                 )}
-              />
+              /> */}
               <FormField
                 control={form.control}
                 name="members"
@@ -244,7 +235,7 @@ const NewProject = ({ userId }: NewProjectProps) => {
                             <span className="text-xs font-medium">
                               Members:
                             </span>
-                            {selectedMembers.map((member: any) => (
+                            {selectedMembers.map((member: UserDtoType) => (
                               <Badge
                                 className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
                                 onClick={() => handleMemberDeselect(member)}

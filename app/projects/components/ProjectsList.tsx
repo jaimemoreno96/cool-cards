@@ -3,6 +3,7 @@
 import { Project as ProjectType } from "../lib/definitions";
 import { Project } from "./";
 import { useProjects } from "../hooks/useProjects";
+import ProjectsListSkeleton from "./ui/ProjectsListSkeleton";
 
 interface ProjectsListProps {
   userId: string;
@@ -16,12 +17,15 @@ export interface ProjectItemType extends ProjectType {
 const ProjectsList = ({ userId }: ProjectsListProps) => {
   const { projects, projectsError, projectsIsLoading } = useProjects(userId);
 
+  console.log("Projects:", projects);
+  
+
   if (projectsError) return <div>Failed to load projects</div>;
-  if (projectsIsLoading) return <div>Loading...</div>;
+  if (projectsIsLoading) return <ProjectsListSkeleton />;
 
   return (
     <>
-      {projects.map((project: ProjectItemType) => (
+      {projects?.map((project: ProjectItemType) => (
         <Project key={project.id} project={project} />
       ))}
     </>

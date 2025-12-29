@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { cachedAuth } from "../lib/session";
 
-const Boards = async () => {
+const BoardsPage = async () => {
   const session = await cachedAuth();
   console.log("Session:", session);
   const user = session?.user;
@@ -11,4 +11,4 @@ const Boards = async () => {
   }
   redirect("/api/auth/signin?callbackUrl=/projects");
 };
-export default Boards;
+export default BoardsPage;
