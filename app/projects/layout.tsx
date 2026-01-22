@@ -1,4 +1,4 @@
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/navbar";
 
 const ProjectsLayout = ({
   children,
@@ -6,14 +6,8 @@ const ProjectsLayout = ({
   return (
     <>
       <Navbar />
-      <div className="flex flex-col gap-4 p-8 w-full mt-16">
-        <h1 className="text-2xl font-bold">Projects</h1>
-        <p>
-          Welcome to your projects. Here you can find all the projects you have
-          created or are currently member of.
-        </p>
+        
         {children}
-      </div>
     </>
   );
 };

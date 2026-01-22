@@ -1,28 +1,28 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon } from "lucide-react";
 
-import { useProject } from "../../hooks/useProject";
+import { useProject } from "../../../boards/hooks/useProject";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import FormName from "./form-name";
 import Member from "./member";
-import MembersDialog from "../members-dialog";
 
 import {
   ProjectInfoType,
   ProjectMembersType,
   projectInfoSchema,
   projectMembersSchema,
-} from "../../lib/definitions";
-import { UpdateProject } from "../../data/project";
+} from "../../../boards/lib/definitions";
+import { UpdateProject } from "../../../boards/data/project";
 import { ProjectDtoType } from "@/app/projects/types/projects";
 import { UserDtoType } from "@/app/projects/types/users";
-import { getMemberById } from "../../data/user";
+import { MembersDialog } from "../members-dialog";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface ProjectInfoProps {
   projectId?: string;
@@ -35,8 +35,6 @@ const ProjectInfo = ({ projectId }: ProjectInfoProps) => {
   );
 
   const [isNameEditable, setIsNameEditable] = useState<boolean>(false);
-  const [membersData, setMembersData] = useState<UserDtoType[]>([]);
-  const [selectedMembers, setSelectedMembers] = useState<UserDtoType[]>([]);
 
   const defaultValuesInfo = {
     name: project?.project?.name || "",
@@ -66,6 +64,7 @@ const ProjectInfo = ({ projectId }: ProjectInfoProps) => {
     const response = await UpdateProject(projectId || "", {
       name,
       description,
+      members: project?.project?.members?.toString() || "",
     });
     if (response.status === 200) {
       console.log("Project updated successfully:", response.data);
@@ -76,6 +75,7 @@ const ProjectInfo = ({ projectId }: ProjectInfoProps) => {
             name: name,
             description: description,
           } as ProjectDtoType,
+          members: response?.data?.members as UserDtoType[],
         },
         false
       );
@@ -85,33 +85,6 @@ const ProjectInfo = ({ projectId }: ProjectInfoProps) => {
   };
 
   console.log(project);
-
-  useEffect(() => {
-    const members: string[] = Array.isArray(project?.project?.members)
-      ? (project.project.members as string[])
-      : [];
-    const fetchMembers = async () => {
-      if (!members.length) return;
-
-      try {
-        const memberPromises = members.map(async (memberId) => {
-          const response = await getMemberById(memberId);
-          if (!response.status || response.status !== 200)
-            throw new Error("Failed to fetch member");
-          const data = await response.data;
-          return data.member;
-        });
-
-        const membersResult = await Promise.all(memberPromises);
-        setMembersData(membersResult.filter(Boolean));
-        setSelectedMembers(membersResult.filter(Boolean));
-      } catch (error) {
-        console.error("Error fetching members:", error);
-      }
-    };
-
-    fetchMembers();
-  }, [project?.project?.members]);
 
   return (
     <>
@@ -149,9 +122,14 @@ const ProjectInfo = ({ projectId }: ProjectInfoProps) => {
       >
         {project?.members?.length ? (
           <div className="relative overflow-hidden *:data-[slot=avatar]:ring-background flex -space-x-2 *:data-[slot=avatar]:ring-2 *:data-[slot=avatar]:grayscale transition-all duration-200 hover:cursor-pointer hover:bg-gray-100 active:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 p-2 w-fit rounded-lg">
-            {project?.members?.map((member: UserDtoType) => (
+            {project?.members?.slice(0, 3).map((member: UserDtoType) => (
               <Member key={member.id} member={member} />
             ))}
+            {project?.members?.length > 3 && (
+              <Avatar className="w-8 h-8">
+                <AvatarFallback>+{project?.members?.length - 3}</AvatarFallback>
+              </Avatar>
+            )}
           </div>
         ) : (
           <Button className="w-fit cursor-pointer" variant="outline">

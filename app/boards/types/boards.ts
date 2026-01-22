@@ -1,7 +1,7 @@
 import { JsonValue } from "@prisma/client/runtime/library";
 
 export interface BoardType {
-    projectId: string;
+    projectId: string | null;
     favorite: boolean;
     name: string;
     id: string;

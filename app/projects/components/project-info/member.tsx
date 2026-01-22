@@ -1,5 +1,4 @@
 import { UserDtoType } from "@/app/projects/types/users";
-import { getMemberById } from "../../data/user";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface MemberProps {

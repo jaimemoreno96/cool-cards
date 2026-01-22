@@ -10,10 +10,27 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="text-2xl font-bold">
           <Link href="/">
-            <Image src="/cool-cards-logo.png" width={120} height={40} alt="logo" className="m-auto" />
+            <Image
+              src="/cool-cards-logo.png"
+              alt="logo"
+              className="m-auto object-contain"
+              priority
+              width={120}
+              height={40}
+            />
           </Link>
         </div>
         <ul className="flex space-x-4">
+          <li className="mr-4 flex items-center">
+            <Link href="/boards" className="text-sm font-normal">
+              Boards
+            </Link>
+          </li>
+          <li className="mr-4 flex items-center">
+            <Link href="/projects" className="text-sm font-normal">
+              Projects
+            </Link>
+          </li>
           <li>
             <form
               action={async () => {
@@ -21,7 +38,9 @@ const Navbar = () => {
                 await signOut();
               }}
             >
-              <Button className="rounded-sm text-sm font-normal" type="submit">Sign Out</Button>
+              <Button className="rounded-sm text-sm font-normal" type="submit">
+                Sign Out
+              </Button>
             </form>
           </li>
         </ul>

@@ -1,13 +1,31 @@
 import { redirect } from "next/navigation";
+
 import { cachedAuth } from "./lib/session";
+
+import { Separator } from "@/components/ui/separator";
+import Navbar from "@/components/navbar";
+
+import { ProjectsList } from "./projects/components/projects-list";
+import { StarIcon } from "lucide-react";
 
 const Home = async () => {
   const session = await cachedAuth();
   console.log("Session:", session);
   const user = session?.user;
-  if (user) {
-    redirect("/projects");
+  if (!user) {
+    redirect("/api/auth/signin?callbackUrl=/");
   }
-  redirect("/api/auth/signin?callbackUrl=/projects");
+  return (
+    <>
+      <Navbar />
+      <div>Welcome, {user.name || "User"}!</div>
+      <h1 className="text-2xl font-bold">Boards</h1>
+
+      <Separator />
+      <h1 className="text-2xl font-bold">Projects</h1>
+      <h3 className="text-md font-normal mb-4 text-black flex items-center"><span className="font-semibold"><StarIcon className="w-4 h-4 text-yellow-500 fill-current mr-2" /></span> Your favorite projects</h3>
+      <ProjectsList userId={user?.id || ""} />
+    </>
+  );
 };
 export default Home;

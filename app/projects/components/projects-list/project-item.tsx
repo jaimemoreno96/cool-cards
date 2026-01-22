@@ -1,17 +1,18 @@
 import Link from "next/link";
 
-import { FavoriteButton } from "./";
-import { ProjectItemType } from "./ProjectsList";
+import FavoriteButton from "./favorite-button";
+import { ProjectItemType } from "./projects-list";
 
-interface ProjectProps {
+interface ProjectItemProps {
   project: ProjectItemType;
+  userId: string;
 }
 
-const Project = ({ project }: ProjectProps) => {
+const ProjectItem = ({ project, userId }: ProjectItemProps) => {
   return (
     <div className="group relative p-4 border rounded-md shadow hover:shadow-lg transition cursor-pointer h-auto bg-white">
       <Link
-        href={`/boards/${project.id}`}
+        href={`/projects/${project.id}`}
         className="absolute inset-0 z-0"
         aria-label={`View project: ${project.name}`}
       />
@@ -19,10 +20,10 @@ const Project = ({ project }: ProjectProps) => {
         <h3 className="relative z-10 text-lg font-semibold text-gray-800 truncate pointer-events-none">
           {project.name}
         </h3>
-        <FavoriteButton projectId={project.id} isFavorite={project.favorite} />
+        <FavoriteButton projectId={project.id} userId={userId} isFavorite={project.favorite} />
       </div>
     </div>
   );
 };
 
-export default Project;
+export default ProjectItem;

@@ -3,7 +3,6 @@ import { SessionProvider } from "next-auth/react";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
-import Navbar from "@/components/Navbar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +19,7 @@ const RootLayout = ({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main>
+        <main className="flex flex-col gap-4 p-8 w-full mt-16">
           <SessionProvider>
             {children}
             <Toaster />

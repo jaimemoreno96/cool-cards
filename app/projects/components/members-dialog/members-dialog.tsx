@@ -1,14 +1,5 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useMemo,
-  useState,
-  useRef,
-  useEffect,
-} from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
-import { CheckIcon, User } from "lucide-react";
 import { KeyedMutator } from "swr";
 
 import {
@@ -32,15 +23,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-
-import { getMembersByEmail } from "@/app/projects/data/user";
-import { UpdateProject } from "../data/project";
-
-import { UserDtoType } from "@/app/projects/types/users";
-import { ProjectMembersType, ProjectType } from "../lib/definitions";
-import { ProjectDtoType, ProjectResponse } from "@/app/projects/types/projects";
-import { debounce } from "@/app/utils/debounce";
+import DeleteMemberDialog from "./delete-member-dialog";
 import MemberListItem from "./member-list-item";
+
+import { UpdateProject } from "../../../boards/data/project";
+import { getMembersByEmail } from "@/app/projects/data/user";
+
+import { ProjectMembersType, ProjectType } from "../../../boards/lib/definitions";
+import { UserDtoType } from "@/app/projects/types/users";
+import { ProjectDtoType, ProjectResponse } from "@/app/projects/types/projects";
+
+import { debounce } from "@/app/utils/debounce";
 
 interface MembersDialogProps {
   children: React.ReactNode;
@@ -62,7 +55,8 @@ const MembersDialog = ({
   const [open, setOpen] = useState(false);
   const [projectMembers, setProjectMembers] = useState<UserDtoType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedMembers, setSelectedMembers] = useState<UserDtoType[]>(members);
+  const [selectedMembers, setSelectedMembers] =
+    useState<UserDtoType[]>(members);
 
   console.log("Members: ", members);
   console.log("Selected Members: ", selectedMembers);
@@ -70,8 +64,6 @@ const MembersDialog = ({
   useEffect(() => {
     setSelectedMembers(members);
   }, [members]);
-  
-  
 
   const onSubmitMembers: SubmitHandler<ProjectMembersType> = useCallback(
     async ({ members }: ProjectMembersType) => {
@@ -95,6 +87,7 @@ const MembersDialog = ({
           },
           false
         );
+        setOpen(false);
         return;
       }
       mutateProject();
@@ -205,7 +198,9 @@ const MembersDialog = ({
                             handleMemberChange(e);
                           }}
                           className="w-full text-sm"
-                          onBlur={() => { setTimeout(() => setProjectMembers([]), 200); }}
+                          onBlur={() => {
+                            setTimeout(() => setProjectMembers([]), 200);
+                          }}
                         />
                         {projectMembers?.length > 0 && (
                           <div className="absolute z-10 w-full mt-2 bg-white border rounded-md shadow-lg">
@@ -225,13 +220,15 @@ const MembersDialog = ({
                               Members:
                             </span>
                             {selectedMembers.map((member: UserDtoType) => (
-                              <Badge
-                                className="cursor-pointer hover:bg-accent hover:text-accent-foreground"
-                                onClick={() => handleMemberDeselect(member)}
+                              <DeleteMemberDialog
                                 key={member.id}
+                                handleMemberDeselect={handleMemberDeselect}
+                                member={member}
                               >
-                                {member.name}
-                              </Badge>
+                                <Badge className="cursor-pointer hover:bg-accent hover:text-accent-foreground">
+                                  {member.name}
+                                </Badge>
+                              </DeleteMemberDialog>
                             ))}
                           </div>
                         )}

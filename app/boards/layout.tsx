@@ -1,4 +1,4 @@
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/navbar";
 
 const BoardsLayout = ({
   children,
@@ -6,7 +6,7 @@ const BoardsLayout = ({
   return (
     <>
       <Navbar />
-      <div className="flex flex-col gap-2 p-8 w-full mt-16">{children}</div>
+      {children}
     </>
   );
 };

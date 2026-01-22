@@ -28,6 +28,7 @@ export const createProject = async (
 
 export const setFavoriteProject = async (
   projectId: string,
+  userId: string,
   favorite: boolean
 ) => {
   try {
@@ -35,6 +36,7 @@ export const setFavoriteProject = async (
       "/api/projects/favorite",
       {
         projectId,
+        userId,
         favorite,
       },
       {

@@ -1,14 +1,15 @@
 import { Dispatch, SetStateAction } from "react";
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
+
 import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ProjectInfoType } from "../../lib/definitions";
+
+import { ProjectInfoType } from "../../../boards/lib/definitions";
 
 interface FormNameProps {
   formInfo: UseFormReturn<
@@ -21,18 +22,25 @@ interface FormNameProps {
   onSubmit: SubmitHandler<ProjectInfoType>;
 }
 
-const FormName = ({ formInfo, setIsNameEditable, defaultValue, onSubmit }: FormNameProps) => {
-
+const FormName = ({
+  formInfo,
+  setIsNameEditable,
+  defaultValue,
+  onSubmit,
+}: FormNameProps) => {
   const handleBlur = () => {
     formInfo.handleSubmit(onSubmit)();
 
-    console.log("defaultValue on blur:", defaultValue, formInfo.getValues("name"));
-    
+    console.log(
+      "defaultValue on blur:",
+      defaultValue,
+      formInfo.getValues("name")
+    );
+
     setIsNameEditable(false);
   };
 
   console.log("Rendering FormName with defaultValue:", defaultValue);
-  
 
   return (
     <FormField

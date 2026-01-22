@@ -1,7 +1,8 @@
-import { NewProject, ProjectsList } from "./components";
+import { redirect } from "next/navigation";
 
 import { cachedAuth } from "../lib/session";
-import { redirect } from "next/navigation";
+
+import { ProjectsList } from "./components/projects-list";
 
 const ProjectsPage = async () => {
   const session = await cachedAuth();
@@ -13,10 +14,14 @@ const ProjectsPage = async () => {
   }
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-4 p-8 w-full">
-      <NewProject userId={user?.id || ""} />
+    <>
+      <h1 className="text-2xl font-bold">Projects</h1>
+      <p>
+        Welcome to your projects. Here you can find all the projects you have
+        created or are currently member of.
+      </p>
       <ProjectsList userId={user?.id || ""} />
-    </div>
+    </>
   );
 };
 

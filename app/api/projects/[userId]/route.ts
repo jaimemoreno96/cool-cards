@@ -1,5 +1,5 @@
 import { projectDto } from "@/app/projects/dto/project";
-import { ProjectType } from "@/app/projects/types/projects";
+import { ProjectDtoType, ProjectType } from "@/app/projects/types/projects";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
@@ -22,7 +22,20 @@ export async function GET(
     }
 
     // Map the projects to a simpler object structure
-    const mappedProjects = projects.map(projectDto);
+    const mappedProjects = await Promise.all(
+      projects.map(async (project) => {
+        const isFavorite = await prisma.userProjectFavorites.findFirst({
+          where: {
+            AND: [{ projectId: project.id }, { userId: userId }],
+          },
+        });
+
+        const mappedProject = projectDto(project);
+        mappedProject.favorite = isFavorite ? true : false;
+
+        return mappedProject;
+      })
+    );
 
     return NextResponse.json(mappedProjects, { status: 200 });
   } catch (error) {

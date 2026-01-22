@@ -1,16 +1,15 @@
 import { Dispatch, SetStateAction } from "react";
 import { SubmitHandler, UseFormReturn } from "react-hook-form";
+
 import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
-import { ProjectInfoType } from "../../lib/definitions";
-import { register } from "module";
 import { Input } from "@/components/ui/input";
+
+import { ProjectInfoType } from "../../../boards/lib/definitions";
 
 interface FormDescriptionProps {
   formInfo: UseFormReturn<

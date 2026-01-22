@@ -4,18 +4,29 @@ import { NextResponse } from "next/server";
 export async function PUT(request: Request) {
   try {
     const data = await request.json();
-    const { projectId, favorite } = data;
-    
+    const { projectId, userId, favorite } = data;
+
     console.log("Request Data:", data);
 
-    await prisma.project.update({
+    const favoriteExists = await prisma.userProjectFavorites.findFirst({
       where: {
-        id: projectId,
-      },
-      data: {
-        favorite: favorite,
+        AND: [{ projectId: projectId }, { userId: userId }],
       },
     });
+    if (favoriteExists) {
+      await prisma.userProjectFavorites.delete({
+        where: {
+          id: favoriteExists.id,
+        },
+      });
+    } else {
+      await prisma.userProjectFavorites.create({
+        data: {
+          projectId: projectId,
+          userId: userId,
+        },
+      });
+    }
 
     return NextResponse.json({ status: 200 });
   } catch (error) {

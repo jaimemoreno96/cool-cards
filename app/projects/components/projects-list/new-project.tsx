@@ -3,7 +3,6 @@
 import { useCallback, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PlusIcon } from "@heroicons/react/24/solid";
 import { CheckIcon, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -18,7 +17,6 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Form,
   FormControl,
@@ -29,22 +27,23 @@ import {
 } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
 
-import { getMembersByEmail } from "../data/user";
-import { createProject } from "../data/project";
+import { getMembersByEmail } from "../../data/user";
+import { createProject } from "../../data/project";
 
-import { useProjects } from "../hooks/useProjects";
+import { useProjects } from "../../hooks/useProjects";
 
-import { Project, projectSchema } from "../lib/definitions";
+import { Project, projectSchema } from "../../lib/definitions";
 
-import { UserDtoType } from "../types/users";
-import { ProjectDtoType } from "../types/projects";
+import { UserDtoType } from "../../types/users";
+import { ProjectDtoType } from "../../types/projects";
 import { debounce } from "@/app/utils/debounce";
 
 interface NewProjectProps {
   userId: string;
+  children: React.ReactNode;
 }
 
-const NewProject = ({ userId }: NewProjectProps) => {
+const NewProject = ({ userId, children }: NewProjectProps) => {
   const defaultValues = {
     name: "",
     description: "",
@@ -141,16 +140,13 @@ const NewProject = ({ userId }: NewProjectProps) => {
     );
   };
 
+  console.log(userId);
+  
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button
-          className="w-full h-auto shadow hover:shadow-lg transition cursor-pointer"
-          variant="outline"
-        >
-          <PlusIcon className="w-4 h-4 text-black mr-2" />
-          New Project
-        </Button>
+        {children }
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
