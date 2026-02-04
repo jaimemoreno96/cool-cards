@@ -18,21 +18,26 @@ import {
   projectInfoSchema,
   projectMembersSchema,
 } from "../../../boards/lib/definitions";
-import { UpdateProject } from "../../../boards/data/project";
+import { updateProject } from "../../../boards/data/project";
 import { ProjectDtoType } from "@/app/projects/types/projects";
 import { UserDtoType } from "@/app/projects/types/users";
 import { MembersDialog } from "../members-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface ProjectInfoProps {
+  userId?: string;
   projectId?: string;
 }
-const ProjectInfo = ({ projectId }: ProjectInfoProps) => {
+const ProjectInfo = ({ userId, projectId }: ProjectInfoProps) => {
   console.log("Project ID:", projectId);
 
-  const { project, projectError, projectIsLoading, mutateProject } = useProject(
-    projectId || ""
-  );
+  const {
+    project,
+    projectError,
+    projectIsLoading,
+    mutateProject,
+    updatSelectedProject,
+  } = useProject(projectId || "");
 
   const [isNameEditable, setIsNameEditable] = useState<boolean>(false);
 
@@ -61,34 +66,24 @@ const ProjectInfo = ({ projectId }: ProjectInfoProps) => {
   }: ProjectInfoType) => {
     console.log("Form submitted:", name, description);
     setIsNameEditable(false);
-    const response = await UpdateProject(projectId || "", {
-      name,
-      description,
-      members: project?.project?.members?.toString() || "",
-    });
-    if (response.status === 200) {
-      console.log("Project updated successfully:", response.data);
-      mutateProject(
-        {
-          project: {
-            ...response?.data?.project,
-            name: name,
-            description: description,
-          } as ProjectDtoType,
-          members: response?.data?.members as UserDtoType[],
-        },
-        false
-      );
-      return;
+    const response = await updatSelectedProject(
+      project?.project?.userId || "",
+      projectId || "",
+      {
+        name,
+        description,
+        members: project?.project?.members?.toString() || "",
+      }
+    );
+    if (response) {
+      setIsNameEditable(false);
     }
-    mutateProject();
   };
 
   console.log(project);
 
   return (
     <>
-      {projectIsLoading ? <p>Loading...</p> : <p>Loaded</p>}
       <Form {...formInfo}>
         <form onSubmit={formInfo.handleSubmit(onSubmit)}>
           <div className="grid gap-2">
@@ -117,7 +112,7 @@ const ProjectInfo = ({ projectId }: ProjectInfoProps) => {
         formMembers={formMembers}
         mutateProject={mutateProject}
         projectId={projectId || ""}
-        userId={project?.project?.userId || ""}
+        userId={project?.project?.userId || userId || ""}
         members={project?.members || []}
       >
         {project?.members?.length ? (

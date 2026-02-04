@@ -18,7 +18,14 @@ export async function GET(
     });
 
     if (!projects || projects.length === 0) {
-      return NextResponse.json({ error: "No projects found" }, { status: 404 });
+      return NextResponse.json(
+        {
+          projects: [],
+          total: 0,
+          error: "No projects found",
+        },
+        { status: 404 }
+      );
     }
 
     // Map the projects to a simpler object structure
@@ -37,7 +44,13 @@ export async function GET(
       })
     );
 
-    return NextResponse.json(mappedProjects, { status: 200 });
+    return NextResponse.json(
+      {
+        projects: mappedProjects.sort((a, b) => a.name.localeCompare(b.name)),
+        total: mappedProjects.length,
+      },
+      { status: 200 }
+    );
   } catch (error) {
     console.log(error);
     return NextResponse.json(

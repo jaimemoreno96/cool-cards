@@ -24,16 +24,20 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DeleteMemberDialog from "./delete-member-dialog";
-import MemberListItem from "./member-list-item";
+import MemberListItem from "../../../../components/member-list/member-list-item";
 
-import { UpdateProject } from "../../../boards/data/project";
+import { updateProject } from "../../../boards/data/project";
 import { getMembersByEmail } from "@/app/projects/data/user";
 
-import { ProjectMembersType, ProjectType } from "../../../boards/lib/definitions";
+import {
+  ProjectMembersType,
+  ProjectType,
+} from "../../../boards/lib/definitions";
 import { UserDtoType } from "@/app/projects/types/users";
 import { ProjectDtoType, ProjectResponse } from "@/app/projects/types/projects";
 
 import { debounce } from "@/app/utils/debounce";
+import MemberList from "@/components/member-list/member-list";
 
 interface MembersDialogProps {
   children: React.ReactNode;
@@ -60,6 +64,8 @@ const MembersDialog = ({
 
   console.log("Members: ", members);
   console.log("Selected Members: ", selectedMembers);
+  console.log("User ID: ", userId);
+  
 
   useEffect(() => {
     setSelectedMembers(members);
@@ -72,7 +78,7 @@ const MembersDialog = ({
       );
       members = projectMembersIds.join(",") || "";
 
-      const response = await UpdateProject(projectId || "", {
+      const response = await updateProject(projectId || "", {
         members,
       } as ProjectType);
 
@@ -83,7 +89,7 @@ const MembersDialog = ({
               ...response?.data?.project,
               members: members,
             } as ProjectDtoType,
-            members: response?.data?.members,
+            members: response?.data?.members as UserDtoType[],
           },
           false
         );
@@ -137,10 +143,10 @@ const MembersDialog = ({
     [userId]
   );
 
-  const handleMemberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMemberChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     debouncedGetMembers(value);
-  };
+  }, [debouncedGetMembers]);
 
   const selectedMembersSet = useMemo(
     () => new Set(selectedMembers.map((m) => m.id)),
@@ -203,16 +209,11 @@ const MembersDialog = ({
                           }}
                         />
                         {projectMembers?.length > 0 && (
-                          <div className="absolute z-10 w-full mt-2 bg-white border rounded-md shadow-lg">
-                            {projectMembers.map((member: UserDtoType) => (
-                              <MemberListItem
-                                key={member.id}
-                                member={member}
-                                isMemberSelected={isMemberSelected}
-                                handleMemberSelect={handleMemberSelect}
-                              />
-                            ))}
-                          </div>
+                          <MemberList
+                            members={projectMembers}
+                            handleMemberSelect={handleMemberSelect}
+                            isMemberSelected={isMemberSelected}
+                          />
                         )}
                         {selectedMembers.length > 0 && (
                           <div className="w-full flex gap-2 flex-wrap mt-2">

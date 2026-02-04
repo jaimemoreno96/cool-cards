@@ -1,40 +1,28 @@
-"use client";
-import { useState } from "react";
 import { StarIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import { setFavoriteProject } from "../../data/project";
+import { useProjects } from "../../hooks/useProjects";
 
 interface FavoriteButtonProps {
   projectId: string;
   isFavorite: boolean;
   userId: string;
 }
-const FavoriteButton = ({ projectId, isFavorite, userId }: FavoriteButtonProps) => {
-  const [favorite, setFavorite] = useState(isFavorite);
+const FavoriteButton = ({
+  projectId,
+  isFavorite,
+  userId,
+}: FavoriteButtonProps) => {
+  const { updateFavoritedProjects } = useProjects(userId);
   const handleFavoriteClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    try {
-      setFavorite(!favorite);
-      const response = await setFavoriteProject(projectId, userId, !isFavorite);
-      if (response.status !== 200) {
-        console.error("Failed to update favorite status");
-        // Handle error (e.g., show a notification)
-        setFavorite(isFavorite);
-        return;
-      }
-    } catch (error) {
-      console.error("Error updating favorite status:", error);
-      // Handle error (e.g., show a notification)
-      setFavorite(isFavorite);
-      return;
-    }
+    updateFavoritedProjects(projectId, !isFavorite);
   };
 
   return (
     <>
-      {favorite ? (
+      {isFavorite ? (
         <Button
           variant="ghost"
           className="cursor-pointer z-10 favorite-button"

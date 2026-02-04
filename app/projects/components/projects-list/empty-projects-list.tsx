@@ -1,4 +1,4 @@
-import { FolderArchiveIcon } from "lucide-react";
+import { FolderArchiveIcon, FolderXIcon } from "lucide-react";
 
 import {
   Empty,
@@ -12,16 +12,16 @@ import { Button } from "@/components/ui/button";
 
 import NewProject from "./new-project";
 
-interface EmptyProjectsProps {
-    userId: string;
+interface EmptyProjectsListProps {
+  userId: string;
 }
 
-const EmptyProjects = ({ userId }: EmptyProjectsProps) => {
+const EmptyProjectsList = ({ userId }: EmptyProjectsListProps) => {
   return (
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <FolderArchiveIcon />
+          <FolderXIcon />
         </EmptyMedia>
         <EmptyTitle>No Projects Yet</EmptyTitle>
         <EmptyDescription>
@@ -32,7 +32,9 @@ const EmptyProjects = ({ userId }: EmptyProjectsProps) => {
       <EmptyContent>
         <div className="flex gap-2">
           <NewProject userId={userId || ""}>
-            <Button className="w-full h-auto shadow hover:shadow-lg transition cursor-pointer">Create Project</Button>
+            <Button className="w-full h-auto shadow hover:shadow-lg transition cursor-pointer">
+              Create Project
+            </Button>
           </NewProject>
         </div>
       </EmptyContent>
@@ -40,4 +42,4 @@ const EmptyProjects = ({ userId }: EmptyProjectsProps) => {
   );
 };
 
-export default EmptyProjects;
+export default EmptyProjectsList;

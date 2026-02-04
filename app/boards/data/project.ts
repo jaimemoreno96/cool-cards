@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from "axios";
 import { UpdateProjectResponse } from "@/app/projects/types/projects";
 import { ProjectType } from "../lib/definitions";
 
-export const UpdateProject = async (
+export const updateProject = async (
   projectId: string,
   data: ProjectType
 ): Promise<AxiosResponse<UpdateProjectResponse, any>> => {

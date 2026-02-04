@@ -2,7 +2,8 @@
 
 import axios, { AxiosResponse } from "axios";
 import { Project } from "../lib/definitions";
-import { BaseResponse, NewProjectResponse } from "../types/projects";
+import { NewProjectResponse } from "../types/projects";
+import { BaseResponse } from "@/app/types/base";
 
 export const createProject = async (
   userId: string,

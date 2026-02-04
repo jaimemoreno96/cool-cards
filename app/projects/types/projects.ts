@@ -1,5 +1,6 @@
 import { JsonValue } from "@prisma/client/runtime/library";
 import { UserDtoType } from "./users";
+import { BaseResponse } from "@/app/types/base";
 
 export interface ProjectType {
   id: string;
@@ -21,8 +22,9 @@ export interface ProjectDtoType {
   favorite: boolean;
 }
 
-export interface BaseResponse {
-  error?: string;
+export interface SelectedProjectType {
+  project: ProjectDtoType;
+  members: UserDtoType[];
 }
 
 export interface ProjectsResponse extends BaseResponse {
@@ -31,8 +33,8 @@ export interface ProjectsResponse extends BaseResponse {
 }
 
 export interface ProjectResponse extends BaseResponse {
-  project?: ProjectDtoType;
-  members?: UserDtoType[];
+  project: ProjectDtoType;
+  members: UserDtoType[];
 }
 
 export interface UpdateProjectResponse extends BaseResponse {
@@ -41,7 +43,7 @@ export interface UpdateProjectResponse extends BaseResponse {
 }
 
 export interface NewProjectResponse extends BaseResponse {
-  project?: ProjectDtoType;
+  project: ProjectDtoType;
 }
 export interface CreateProjectData {
   name: string;

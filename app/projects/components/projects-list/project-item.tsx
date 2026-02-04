@@ -1,10 +1,10 @@
 import Link from "next/link";
 
 import FavoriteButton from "./favorite-button";
-import { ProjectItemType } from "./projects-list";
+import { ProjectDtoType } from "../../types/projects";
 
 interface ProjectItemProps {
-  project: ProjectItemType;
+  project: ProjectDtoType;
   userId: string;
 }
 

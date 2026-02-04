@@ -21,7 +21,7 @@ const ProjectBoardsPage = async ({
 
   return (
     <>
-      <ProjectInfo projectId={projectId} />
+      <ProjectInfo userId={user.id} projectId={projectId} />
       <div className="grid grid-cols-1 xl:grid-cols-4 lg:grid-cols-3 md:grid-cols-2 gap-4 p-8 w-full">
         page
       </div>

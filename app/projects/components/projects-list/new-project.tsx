@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { use, useCallback, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckIcon, User } from "lucide-react";
@@ -28,15 +28,14 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 import { getMembersByEmail } from "../../data/user";
-import { createProject } from "../../data/project";
 
 import { useProjects } from "../../hooks/useProjects";
 
 import { Project, projectSchema } from "../../lib/definitions";
 
 import { UserDtoType } from "../../types/users";
-import { ProjectDtoType } from "../../types/projects";
 import { debounce } from "@/app/utils/debounce";
+import MemberList from "@/components/member-list/member-list";
 
 interface NewProjectProps {
   userId: string;
@@ -44,11 +43,13 @@ interface NewProjectProps {
 }
 
 const NewProject = ({ userId, children }: NewProjectProps) => {
-  const defaultValues = {
-    name: "",
-    description: "",
-    members: "",
-  };
+  const defaultValues = useMemo(() => {
+    return {
+      name: "",
+      description: "",
+      members: "",
+    };
+  }, []);
 
   const form = useForm<Project>({
     resolver: zodResolver(projectSchema),
@@ -61,35 +62,29 @@ const NewProject = ({ userId, children }: NewProjectProps) => {
 
   const [open, setOpen] = useState(false);
 
-  const { mutateProjects } = useProjects(userId);
+  const { addNewProject } = useProjects(userId);
 
-  const onSubmit: SubmitHandler<Project> = async (data: Project) => {
-    const projectMembers: string[] = [];
-    if (selectedMembers.length) {
-      selectedMembers.forEach((member: any) => {
-        projectMembers.push(member.id);
-      });
-    }
-    data.members = projectMembers.join(",") || "";
-    const response = await createProject(userId, data);
-    if (response.status === 200) {
-      mutateProjects(
-        (projects: ProjectDtoType[]) =>
-          projects
-            ? [...projects, response.data.project]
-            : [response.data.project],
-        false
-      );
-      setOpen(false);
-      form.reset(defaultValues);
-      setSelectedMembers([]);
-      setMembers([]);
-      return;
-    }
-    mutateProjects();
-  };
+  const onSubmit: SubmitHandler<Project> = useCallback(
+    async (data: Project) => {
+      const projectMembers: string[] = [];
+      if (selectedMembers.length) {
+        selectedMembers.forEach((member: any) => {
+          projectMembers.push(member.id);
+        });
+      }
+      data.members = projectMembers.join(",") || "";
+      const response = await addNewProject(userId, data);
+      if (response) {
+        setOpen(false);
+        form.reset(defaultValues);
+        setSelectedMembers([]);
+        setMembers([]);
+      }
+    },
+    [addNewProject, form, defaultValues, selectedMembers, userId]
+  );
 
-  const getMembers = async (value: string) => {
+  const getMembers = useCallback(async (value: string) => {
     if (!value) {
       setMembers([]);
       return;
@@ -105,21 +100,16 @@ const NewProject = ({ userId, children }: NewProjectProps) => {
     }
 
     setMembers([]);
-  };
+  }, [userId]);
 
-  const handleMemberSelect = (member: any) => {
-    const isSelected = isMemberSelected(member);
-
-    if (isSelected) {
-      return;
-    }
-    setSelectedMembers([...selectedMembers, member]);
-    setMembers([]);
-  };
-
-  const handleMemberDeselect = (member: UserDtoType) => {
-    setSelectedMembers(selectedMembers.filter((m: any) => m.id !== member.id));
-  };
+  const handleMemberDeselect = useCallback(
+    (member: UserDtoType) => {
+      setSelectedMembers(
+        selectedMembers.filter((m: any) => m.id !== member.id)
+      );
+    },
+    [selectedMembers]
+  );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedGetMembers = useCallback(
@@ -129,25 +119,44 @@ const NewProject = ({ userId, children }: NewProjectProps) => {
     []
   );
 
-  const handleMemberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    debouncedGetMembers(value);
-  };
+  const handleMemberChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      debouncedGetMembers(value);
+    },
+    [debouncedGetMembers]
+  );
 
-  const isMemberSelected = (member: any) => {
-    return selectedMembers.some(
-      (selectedMember: any) => selectedMember.id === member.id
-    );
-  };
+  const selectedMembersSet = useMemo(
+    () => new Set(selectedMembers.map((m) => m.id)),
+    [selectedMembers]
+  );
+
+  const isMemberSelected = useCallback(
+    (member: UserDtoType) => {
+      return selectedMembersSet.has(member.id);
+    },
+    [selectedMembersSet]
+  );
+
+  const handleMemberSelect = useCallback(
+    (member: UserDtoType) => {
+      const isSelected = isMemberSelected(member);
+
+      if (isSelected) {
+        return;
+      }
+      setSelectedMembers([...selectedMembers, member]);
+      setMembers([]);
+    },
+    [isMemberSelected, selectedMembers]
+  );
 
   console.log(userId);
-  
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {children }
-      </DialogTrigger>
+      <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create Project</DialogTitle>
@@ -207,24 +216,11 @@ const NewProject = ({ userId, children }: NewProjectProps) => {
                           }}
                         />
                         {members?.length > 0 && (
-                          <div className="absolute z-10 w-full mt-2 bg-white border rounded-md shadow-lg">
-                            {members.map((member: UserDtoType) => (
-                              <div
-                                className="p-1 cursor-pointer hover:bg-gray-100"
-                                key={member.id}
-                                onClick={() => handleMemberSelect(member)}
-                              >
-                                {isMemberSelected(member) ? (
-                                  <CheckIcon className="inline-block mr-2 text-green-500" />
-                                ) : (
-                                  <User className="inline-block mr-2" />
-                                )}
-                                <span className="text-xs font-medium">
-                                  {member.name}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
+                          <MemberList
+                            members={members}
+                            handleMemberSelect={handleMemberSelect}
+                            isMemberSelected={isMemberSelected}
+                          />
                         )}
                         {selectedMembers.length > 0 && (
                           <div className="w-full flex gap-2 flex-wrap mt-2">
