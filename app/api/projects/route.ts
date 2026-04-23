@@ -1,9 +1,10 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+
 import { projectDto } from "@/app/projects/dto/project";
 import { userDto } from "@/app/projects/dto/user";
 import { ProjectType } from "@/app/projects/types/projects";
-import { UserDtoType } from "@/app/projects/types/users";
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { UserDtoType, UserRoles } from "@/app/projects/types/users";
 
 export async function POST(request: Request) {
   try {
@@ -22,29 +23,32 @@ export async function POST(request: Request) {
 
     if (!project) {
       return NextResponse.json(
-        { error: "Failed to create project" },
-        { status: 500 }
+        { error: "No project was created" },
+        { status: 404 }
       );
     }
+
+    await prisma.userProjectIsMember.create({
+      data: {
+        projectId: project.id,
+        userId: data.userId,
+        role: UserRoles.ADMIN,
+      },
+    });
+
+    await prisma.userProjectIsMember.createMany({
+      data: members.map((memberId: string) => {
+        return {
+          projectId: project.id,
+          userId: memberId,
+          role: UserRoles.USER,
+        };
+      }),
+    });
+
     const mappedProject = projectDto(project);
 
-    let membersArray: UserDtoType[] = [];
-
-    // Get members details if members exist
-    if (
-      mappedProject.members &&
-      (mappedProject.members as string[]).length > 0
-    ) {
-      const members = await prisma.user.findMany({
-        where: {
-          id: {
-            in: mappedProject.members as string[],
-          },
-        },
-      });
-      membersArray = members.map(userDto);
-    }
-    return NextResponse.json({ project: mappedProject, members: membersArray }, { status: 200 });
+    return NextResponse.json({ project: mappedProject }, { status: 200 });
   } catch (error) {
     console.log(error);
     return NextResponse.json(
@@ -70,33 +74,63 @@ export async function PUT(request: Request) {
       },
     });
     if (!project) {
-      return NextResponse.json(
-        { error: "Failed to update project" },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: "No project found" }, { status: 404 });
     }
     const mappedProject = projectDto(project);
     let membersArray: UserDtoType[] = [];
 
-    // Get members details if members exist
+    // Get members details, and add or update members if members exist
+    await prisma.userProjectIsMember.deleteMany({
+      where: {
+        projectId: project.id,
+      },
+    });
+
     if (
       mappedProject.members &&
       (mappedProject.members as string[]).length > 0
     ) {
-      const members = await prisma.user.findMany({
+      const projectMembers = await prisma.user.findMany({
         where: {
           id: {
             in: mappedProject.members as string[],
           },
         },
       });
-      membersArray = members.map(userDto);
+
+      membersArray = projectMembers.map(userDto);
+
+      await prisma.userProjectIsMember.create({
+        data: {
+          projectId: project.id,
+          userId: project.userId,
+          role: UserRoles.ADMIN,
+        },
+      });
+
+      await prisma.userProjectIsMember.createMany({
+        data: members.map((memberId: string) => {
+          return {
+            projectId: project.id,
+            userId: memberId,
+            role: UserRoles.USER,
+          };
+        }),
+      });
     }
-    return NextResponse.json({ project: mappedProject, members: membersArray }, { status: 200 });
+
+    return NextResponse.json(
+      { project: mappedProject, members: membersArray },
+      { status: 200 }
+    );
   } catch (error) {
     console.log(error);
     return NextResponse.json(
-      { error: "Failed to update project" },
+      {
+        error: `Failed to update project: ${
+          error instanceof Error ? error.message : "Unknown error"
+        }`,
+      },
       { status: 500 }
     );
   }

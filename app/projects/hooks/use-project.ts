@@ -6,8 +6,9 @@ import {
   SelectedProjectType,
 } from "@/app/projects/types/projects";
 import { useProjectsStore } from "@/app/store/projects";
+
 import { ProjectType } from "../lib/definitions";
-import { updateProject } from "../data/project";
+import { updateProject } from "../../boards/data/project";
 import { UserDtoType } from "@/app/projects/types/users";
 
 const fetcher = (url: string) =>
@@ -19,63 +20,41 @@ export const useProject = (projectId: string) => {
     `/api/projects/project/${projectId}`,
     fetcher,
     {
-      onSuccess: (data: ProjectResponse) => {
-        console.log("Fetched project data:", data);
-        setSelectedProject({
-          project: data?.project,
-          members: data?.members,
-        });
-      },
-      revalidateOnFocus: false,
+      revalidateOnFocus: true,
       shouldRetryOnError: false,
     }
   );
 
-  const updatSelectedProject = async (
+  const project = data?.project;
+  const members = data?.members;
+
+  const updateSelectedProject = async (
     userId: string,
     projectId: string,
     data: ProjectType,
     members?: UserDtoType[]
   ) => {
-    const currentSelectedProject = selectedProject;
-    const optimisticProject: SelectedProjectType = {
-      project: {
-        id: projectId,
-        userId,
-        favorite: currentSelectedProject?.project.favorite || false,
-        name: data.name,
-        description: data.description,
-        members: data.members,
-      },
-      members: members || currentSelectedProject?.members || [],
-    };
-    setSelectedProject(optimisticProject);
     try {
       const response = await updateProject(projectId || "", data);
       if (response.status !== 200) throw new Error("Failed to update project");
       const updatedProject = response?.data?.project;
       const updatedMembers = response?.data?.members;
 
-      setSelectedProject({
-        project: updatedProject,
-        members: updatedMembers,
-      } as SelectedProjectType);
       await mutate();
 
       return { project: updatedProject, members: updatedMembers };
     } catch (error) {
-      setSelectedProject(currentSelectedProject);
+      await mutate();
+      throw error;
     }
   };
 
   return {
-    project: data
-      ? ({
-          project: data.project,
-          members: data.members,
-        } as SelectedProjectType)
-      : selectedProject,
-    updatSelectedProject,
+    project: {
+      project,
+      members,
+    } as SelectedProjectType,
+    updateSelectedProject,
     projectError: error,
     projectIsLoading: isLoading,
     mutateProject: mutate,

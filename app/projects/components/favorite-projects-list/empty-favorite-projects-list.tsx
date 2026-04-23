@@ -1,4 +1,4 @@
-import { FolderArchiveIcon, FolderPlusIcon, StarIcon } from "lucide-react";
+import { FolderPlusIcon, StarIcon } from "lucide-react";
 
 import {
   Empty,

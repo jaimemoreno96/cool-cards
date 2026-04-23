@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 
-import { ProjectInfoType } from "../../../boards/lib/definitions";
+import { BoardInfoType } from "../../../lib/definitions";
 
 interface FormNameProps {
   formInfo: UseFormReturn<
@@ -19,7 +19,7 @@ interface FormNameProps {
   >;
   setIsNameEditable: Dispatch<SetStateAction<boolean>>;
   defaultValue?: string;
-  onSubmit: SubmitHandler<ProjectInfoType>;
+  onSubmit: SubmitHandler<BoardInfoType>;
 }
 
 const FormName = ({
@@ -28,20 +28,6 @@ const FormName = ({
   defaultValue,
   onSubmit,
 }: FormNameProps) => {
-  const handleBlur = () => {
-    formInfo.handleSubmit(onSubmit)();
-
-    console.log(
-      "defaultValue on blur:",
-      defaultValue,
-      formInfo.getValues("name")
-    );
-
-    setIsNameEditable(false);
-  };
-
-  console.log("Rendering FormName with defaultValue:", defaultValue);
-
   return (
     <FormField
       control={formInfo.control}
@@ -51,10 +37,10 @@ const FormName = ({
           <FormControl>
             <Input
               id="name"
-              placeholder="Project name"
+              placeholder="Board name"
               {...field}
               onBlur={formInfo.handleSubmit(onSubmit)}
-              className="w-fit mb-3"
+              className="text-2xl md:text-2xl font-bold text-white w-fit md:w-fit bg-transparent"
               autoFocus
               value={field.value === "" ? defaultValue : field.value}
             />

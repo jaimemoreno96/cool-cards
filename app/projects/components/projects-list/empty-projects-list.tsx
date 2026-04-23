@@ -1,4 +1,4 @@
-import { FolderArchiveIcon, FolderXIcon } from "lucide-react";
+import { FolderXIcon } from "lucide-react";
 
 import {
   Empty,
@@ -31,7 +31,7 @@ const EmptyProjectsList = ({ userId }: EmptyProjectsListProps) => {
       </EmptyHeader>
       <EmptyContent>
         <div className="flex gap-2">
-          <NewProject userId={userId || ""}>
+          <NewProject userId={userId || ""} >
             <Button className="w-full h-auto shadow hover:shadow-lg transition cursor-pointer">
               Create Project
             </Button>

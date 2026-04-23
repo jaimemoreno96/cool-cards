@@ -16,7 +16,7 @@ const ProjectsPage = async () => {
   }
 
   return (
-    <>
+    <div className="flex flex-col gap-2 p-4 w-full">
       <h1 className="text-2xl font-bold">Projects</h1>
       <p>
         Welcome to your projects. Here you can find all the projects you have
@@ -33,7 +33,7 @@ const ProjectsPage = async () => {
         All your projects
       </h3>
       <ProjectsList userId={user?.id || ""} />
-    </>
+    </div>
   );
 };
 

@@ -7,10 +7,16 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { FolderArchiveIcon, FolderXIcon } from "lucide-react";
+import { FolderXIcon } from "lucide-react";
 import React from "react";
+import NewBoard from "./new-board";
 
-const EmptyBoardsList = () => {
+interface EmptyBoardsListProps {
+  userId?: string;
+  projectId?: string;
+}
+
+const EmptyBoardsList = ({ userId, projectId }: EmptyBoardsListProps) => {
   return (
     <Empty>
       <EmptyHeader>
@@ -19,15 +25,17 @@ const EmptyBoardsList = () => {
         </EmptyMedia>
         <EmptyTitle>No Boards Yet</EmptyTitle>
         <EmptyDescription>
-          You haven&apos;t created any boards yet. Get started by creating
-          your first board.
+          You haven&apos;t created any boards yet. Get started by creating your
+          first board.
         </EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <div className="flex gap-2">
-          <Button className="w-full h-auto shadow hover:shadow-lg transition cursor-pointer">
-            Create Board
-          </Button>
+          <NewBoard userId={userId || ""} projectId={projectId}>
+            <Button className="w-full h-auto shadow hover:shadow-lg transition cursor-pointer">
+              Create Board
+            </Button>
+          </NewBoard>
         </div>
       </EmptyContent>
     </Empty>

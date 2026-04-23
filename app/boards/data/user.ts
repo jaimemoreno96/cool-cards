@@ -1,22 +1,21 @@
 import axios, { AxiosResponse } from "axios";
-import { MemberResponse } from "../types/users";
+import { UsersResponse } from "@/app/projects/types/users";
 
-export const getMemberById = async (
-  userId: string
-): Promise<AxiosResponse<MemberResponse, any>> => {
+export const getMembersByEmail = async (value: string, userId: string): Promise<AxiosResponse<UsersResponse, any>> => {
   try {
-    const response = await axios.get<MemberResponse>(
-      `/api/users/members/${userId}`, // Correct endpoint path
+    const response = await axios.post<UsersResponse>(
+      "/api/users/members",
+      { value, userId },
       {
         headers: {
           "Content-Type": "application/json",
         },
       }
     );
-
+    
     return response;
   } catch (error) {
-    console.error("Error fetching member: ", error);
-    throw new Error("Failed to fetch member");
+    console.error("Error fetching members:", error);
+    throw new Error("Failed to fetch members");
   }
 };

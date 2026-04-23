@@ -1,1 +1,1 @@
-export {default as ProjectsListSkeleton} from "./ProjectsListSkeleton";
+export {default as ProjectsListSkeleton} from "./projects-list-skeleton";

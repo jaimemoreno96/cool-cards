@@ -2,33 +2,26 @@ import { StarIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-import { useProjects } from "../../hooks/useProjects";
-
 interface FavoriteButtonProps {
-  projectId: string;
   isFavorite: boolean;
-  userId: string;
+  handleFavoriteOnClick: (e: React.MouseEvent) => void;
+  disabled?: boolean;
 }
 const FavoriteButton = ({
-  projectId,
   isFavorite,
-  userId,
+  handleFavoriteOnClick,
+  disabled,
 }: FavoriteButtonProps) => {
-  const { updateFavoritedProjects } = useProjects(userId);
-  const handleFavoriteClick = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    updateFavoritedProjects(projectId, !isFavorite);
-  };
-
   return (
     <>
       {isFavorite ? (
         <Button
           variant="ghost"
-          className="cursor-pointer z-10 favorite-button"
+          className="cursor-pointer z-10 favorite-button rounded-full"
+          disabled={disabled}
           onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
-            handleFavoriteClick(e);
+            handleFavoriteOnClick(e);
           }}
         >
           <StarIcon className="text-yellow-500 fill-current transition duration-200" />
@@ -36,10 +29,10 @@ const FavoriteButton = ({
       ) : (
         <Button
           variant="ghost"
-          className="cursor-pointer z-10 favorite-button is-not-favorite"
+          className="cursor-pointer z-10 favorite-button is-not-favorite rounded-full"
           onClick={(e: React.MouseEvent) => {
             e.stopPropagation();
-            handleFavoriteClick(e);
+            handleFavoriteOnClick(e);
           }}
         >
           <StarIcon className="text-gray-400 transition duration-200" />

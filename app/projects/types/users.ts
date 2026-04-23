@@ -1,5 +1,10 @@
 import { $Enums } from "@prisma/client";
 
+
+export enum UserRoles {
+    ADMIN = "ADMIN",
+    USER = "USER",
+}
 export interface UserType {
     id: string;
     image: string | null;

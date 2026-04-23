@@ -9,6 +9,7 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/lib/prisma";
 import { SignInFormInputs } from "./app/(auth)/sign-in/lib/definitions";
 import { comparePassword } from "./app/(auth)/lib/passwords";
+import { getPermissionsForRole } from "./app/boards/lib/rbca";
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   theme: {
@@ -118,7 +119,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         name: session.user.name,
         email: session.user.email,
         image: session.user.image,
-        roles: session.user.roles,
       };
       session.user = user;
       return session;

@@ -5,24 +5,17 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon } from "lucide-react";
 
-import { useProject } from "../../../boards/hooks/useProject";
 
 import { Form } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import FormName from "./form-name";
 import Member from "./member";
 
-import {
-  ProjectInfoType,
-  ProjectMembersType,
-  projectInfoSchema,
-  projectMembersSchema,
-} from "../../../boards/lib/definitions";
-import { updateProject } from "../../../boards/data/project";
-import { ProjectDtoType } from "@/app/projects/types/projects";
 import { UserDtoType } from "@/app/projects/types/users";
-import { MembersDialog } from "../members-dialog";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useProject } from "@/app/projects/hooks/use-project";
+import { projectInfoSchema, ProjectInfoType, projectMembersSchema, ProjectMembersType } from "@/app/projects/lib/definitions";
+import { MembersDialog } from "@/app/projects/[projectId]/components/members-dialog";
 
 interface ProjectInfoProps {
   userId?: string;
@@ -36,7 +29,7 @@ const ProjectInfo = ({ userId, projectId }: ProjectInfoProps) => {
     projectError,
     projectIsLoading,
     mutateProject,
-    updatSelectedProject,
+    updateSelectedProject,
   } = useProject(projectId || "");
 
   const [isNameEditable, setIsNameEditable] = useState<boolean>(false);
@@ -66,7 +59,7 @@ const ProjectInfo = ({ userId, projectId }: ProjectInfoProps) => {
   }: ProjectInfoType) => {
     console.log("Form submitted:", name, description);
     setIsNameEditable(false);
-    const response = await updatSelectedProject(
+    const response = await updateSelectedProject(
       project?.project?.userId || "",
       projectId || "",
       {
@@ -110,7 +103,6 @@ const ProjectInfo = ({ userId, projectId }: ProjectInfoProps) => {
       </Form>
       <MembersDialog
         formMembers={formMembers}
-        mutateProject={mutateProject}
         projectId={projectId || ""}
         userId={project?.project?.userId || userId || ""}
         members={project?.members || []}

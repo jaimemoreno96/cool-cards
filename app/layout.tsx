@@ -19,7 +19,7 @@ const RootLayout = ({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <main className="flex flex-col gap-4 p-8 w-full mt-16">
+        <main className="flex flex-col w-full h-full">
           <SessionProvider>
             {children}
             <Toaster />

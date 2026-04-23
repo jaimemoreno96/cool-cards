@@ -11,6 +11,7 @@ model Card {
   id          String   @id @default(cuid())
   userId      String
   boardId     String
+  boardColumnId String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   description String?  @db.Text
@@ -18,10 +19,26 @@ model Card {
   name        String?
   members     Json?    @db.Json
   tags        Json?    @db.Json
+  position    Int
   user        User?    @relation(fields: [userId], references: [id])
   board       Board?   @relation(fields: [boardId], references: [id])
+  boardColumn BoardColumn? @relation(fields: [boardColumnId], references: [id])
 
   @@map("cards")
+}
+
+model BoardColumn {
+  id        String   @id @default(cuid())
+  boardId   String
+  name      String
+  position  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  board     Board?   @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  cards Card[]
+
+  @@map("board_columns")
 }
 
 model Board {
@@ -31,14 +48,16 @@ model Board {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   description String?  @db.Text
-  image       String?
+  imageUrl    String?
+  imageName   String?
   name        String
   members     Json?    @db.Json
   favorite    Boolean  @default(false)
-  project     Project? @relation(fields: [projectId], references: [id])
+  project     Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
   user        User?    @relation(fields: [userId], references: [id])
 
   cards Card[]
+  boardColumns BoardColumn[]
   userFavorites UserBoardFavorites[]
   userIsMember UserBoardIsMember[]
 
@@ -49,6 +68,7 @@ model UserBoardIsMember {
   id        String   @id @default(cuid())
   userId    String
   boardId   String
+  role      users_roles
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User?    @relation(fields: [userId], references: [id])
@@ -94,6 +114,7 @@ model UserProjectIsMember {
   id        String   @id @default(cuid())
   userId    String
   projectId String
+  role      users_roles
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   user      User?    @relation(fields: [userId], references: [id])

@@ -11,8 +11,33 @@ export interface BoardType {
   createdAt: Date;
   updatedAt: Date;
   description: string | null;
+  imageName: string | null;
+  imageUrl: string | null;
+  members: JsonValue | null;
+}
+
+export interface BoardColumnType {
+  id: string;
+  boardId: string;
+  name: string;
+  position: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface CardType {
+  id: string;
+  userId: string;
+  boardId: string;
+  boardColumnId: string;
+  name: string;
+  description: string | null;
+  position: number;
+  tags: JsonValue | null;
   image: string | null;
   members: JsonValue | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface BoardDtoType {
@@ -22,8 +47,36 @@ export interface BoardDtoType {
   id: string;
   userId: string;
   description?: string;
+  imageName?: string | null;
+  imageUrl?: string | null;
+  members?: JsonValue | null;
+  membersData?: UserDtoType[] | null;
+}
+
+export interface BoardColumnDtoType {
+  id: string;
+  boardId: string;
+  name: string;
+  position: number;
+  cards?: CardDtoType[];
+}
+
+export interface CardDtoType {
+  id: string;
+  userId: string;
+  boardId: string;
+  boardColumnId: string;
+  name: string;
+  description?: string;
+  position: number;
+  tags?: JsonValue | null;
   image?: string | null;
   members?: JsonValue | null;
+}
+
+export interface BoardImage {
+  name: string;
+  url: string;
 }
 
 export interface BoardsResponse extends BaseResponse {

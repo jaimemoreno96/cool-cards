@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
 import { cachedAuth } from "@/app/lib/session";
-import { ProjectInfo } from "../components/project-info";
+import { ProjectInfo } from "./components/project-info";
 
 const ProjectBoardsPage = async ({
   params,
@@ -12,7 +12,7 @@ const ProjectBoardsPage = async ({
   const { projectId } = await params;
   console.log("Session:", session);
   console.log("Project ID:", projectId);
-  
+
   const user = session?.user;
 
   if (!user) {

@@ -8,8 +8,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-
-import { ProjectInfoType } from "../../../boards/lib/definitions";
+import { ProjectInfoType } from "@/app/projects/lib/definitions";
 
 interface FormDescriptionProps {
   formInfo: UseFormReturn<

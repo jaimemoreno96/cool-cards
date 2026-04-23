@@ -15,6 +15,9 @@ export async function GET(
       where: {
         userId: userId as string,
       },
+      orderBy: {
+        name: "desc",
+      },
     });
 
     if (!projects || projects.length === 0) {
@@ -24,7 +27,9 @@ export async function GET(
           total: 0,
           error: "No projects found",
         },
-        { status: 404 }
+        {
+          status: 404,
+        }
       );
     }
 
@@ -46,10 +51,15 @@ export async function GET(
 
     return NextResponse.json(
       {
-        projects: mappedProjects.sort((a, b) => a.name.localeCompare(b.name)),
+        projects: mappedProjects,
         total: mappedProjects.length,
       },
-      { status: 200 }
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        status: 200,
+      }
     );
   } catch (error) {
     console.log(error);

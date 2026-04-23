@@ -24,34 +24,29 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import DeleteMemberDialog from "./delete-member-dialog";
-import MemberListItem from "../../../../components/member-list/member-list-item";
 
-import { updateProject } from "../../../boards/data/project";
 import { getMembersByEmail } from "@/app/projects/data/user";
 
-import {
-  ProjectMembersType,
-  ProjectType,
-} from "../../../boards/lib/definitions";
+import { ProjectMembersType, ProjectType } from "../../../lib/definitions";
 import { UserDtoType } from "@/app/projects/types/users";
-import { ProjectDtoType, ProjectResponse } from "@/app/projects/types/projects";
+import { ProjectResponse } from "@/app/projects/types/projects";
 
 import { debounce } from "@/app/utils/debounce";
 import MemberList from "@/components/member-list/member-list";
+import { useProject } from "@/app/projects/hooks/use-project";
 
 interface MembersDialogProps {
   children: React.ReactNode;
   formMembers: UseFormReturn<{ members?: string | undefined }, any, undefined>;
-  mutateProject: KeyedMutator<ProjectResponse>;
   members: UserDtoType[];
   projectId?: string;
+  boardId?: string;
   userId: string;
 }
 
 const MembersDialog = ({
   children,
   formMembers,
-  mutateProject,
   members,
   projectId,
   userId,
@@ -62,43 +57,33 @@ const MembersDialog = ({
   const [selectedMembers, setSelectedMembers] =
     useState<UserDtoType[]>(members);
 
-  console.log("Members: ", members);
-  console.log("Selected Members: ", selectedMembers);
-  console.log("User ID: ", userId);
-  
+  const { updateSelectedProject } = useProject(projectId || "");
 
   useEffect(() => {
     setSelectedMembers(members);
   }, [members]);
 
-  const onSubmitMembers: SubmitHandler<ProjectMembersType> = useCallback(
+  const onSubmitMembers = useCallback(
     async ({ members }: ProjectMembersType) => {
       const projectMembersIds = selectedMembers.map(
         (member: UserDtoType) => member.id
       );
       members = projectMembersIds.join(",") || "";
 
-      const response = await updateProject(projectId || "", {
-        members,
-      } as ProjectType);
-
-      if (response.status === 200) {
-        mutateProject(
-          {
-            project: {
-              ...response?.data?.project,
-              members: members,
-            } as ProjectDtoType,
-            members: response?.data?.members as UserDtoType[],
-          },
-          false
-        );
+      const response = await updateSelectedProject(
+        userId,
+        projectId || "",
+        {
+          members,
+        } as ProjectType,
+        selectedMembers
+      );
+      if (response) {
         setOpen(false);
         return;
       }
-      mutateProject();
     },
-    [selectedMembers, projectId, mutateProject]
+    [selectedMembers, updateSelectedProject, userId, projectId]
   );
 
   const getMembers = useCallback(
@@ -143,10 +128,13 @@ const MembersDialog = ({
     [userId]
   );
 
-  const handleMemberChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    debouncedGetMembers(value);
-  }, [debouncedGetMembers]);
+  const handleMemberChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+      debouncedGetMembers(value);
+    },
+    [debouncedGetMembers]
+  );
 
   const selectedMembersSet = useMemo(
     () => new Set(selectedMembers.map((m) => m.id)),
@@ -180,7 +168,7 @@ const MembersDialog = ({
         <DialogHeader>
           <DialogTitle>Add Members</DialogTitle>
           <DialogDescription>
-            Add members to your board by their email addresses.
+            Add members to your project by their email addresses.
           </DialogDescription>
         </DialogHeader>
         <Form {...formMembers}>

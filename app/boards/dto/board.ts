@@ -8,7 +8,8 @@ export const boardDto = (board: BoardType): BoardDtoType => {
     projectId: board.projectId || "",
     userId: board.userId || "",
     favorite: board.favorite,
-    image: board.image,
+    imageName: board.imageName,
+    imageUrl: board.imageUrl,
     members: board.members,
   };
 };

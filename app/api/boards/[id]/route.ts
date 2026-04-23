@@ -15,6 +15,12 @@ export async function GET(
       where: {
         userId: id as string,
       },
+      orderBy: {
+        name: "desc",
+      },
+      include: {
+        user: true,       
+      },
     });
 
     if (!boards || boards.length === 0) {
@@ -35,16 +41,30 @@ export async function GET(
         const mappedBoard = boardDto(board);
         mappedBoard.favorite = isFavorite ? true : false;
 
+        const boardMembers = await prisma.user.findMany({
+          where: {
+            id: {
+              in: board.members as string[],
+            },
+          },
+        });
+
+        mappedBoard.membersData = boardMembers.map((member) => ({
+          id: member.id,
+          name: member.name,
+          email: member.email,
+        }));
+
         return mappedBoard;
       })
     );
 
     return NextResponse.json(
       {
-        boards: mappedBoards.sort((a, b) => a.name.localeCompare(b.name)),
+        boards: mappedBoards,
         total: mappedBoards.length,
       },
-      { status: 200 }
+      { headers: { "Content-Type": "application/json" }, status: 200 }
     );
   } catch (error) {
     console.log(error);

@@ -29,7 +29,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { getMembersByEmail } from "../../data/user";
 
-import { useProjects } from "../../hooks/useProjects";
+import { useProjects } from "../../hooks/use-projects";
 
 import { Project, projectSchema } from "../../lib/definitions";
 

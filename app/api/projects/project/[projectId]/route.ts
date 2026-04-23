@@ -45,7 +45,7 @@ export async function GET(
 
     return NextResponse.json(
       { project: mappedProject, members: membersArray },
-      { status: 200 }
+      { headers: { "Content-Type": "application/json" }, status: 200 }
     );
   } catch (error) {
     console.log(error);

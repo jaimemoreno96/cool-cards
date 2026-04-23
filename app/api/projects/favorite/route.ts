@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export async function PUT(request: Request) {
   try {
@@ -19,6 +20,7 @@ export async function PUT(request: Request) {
           id: favoriteExists.id,
         },
       });
+      revalidatePath(`/api/projects/${userId}`);
     } else {
       await prisma.userProjectFavorites.create({
         data: {
@@ -26,6 +28,7 @@ export async function PUT(request: Request) {
           userId: userId,
         },
       });
+      revalidatePath(`/api/projects/${userId}`);
     }
 
     return NextResponse.json({ status: 200 });
