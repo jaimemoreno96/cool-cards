@@ -11,7 +11,7 @@ export async function GET(
   request: Request,
   { params }: { params: { boardId: string } }
 ) {
-  const { boardId } = params;
+  const { boardId } = await params;
   console.log("board ID:", boardId);
 
   try {

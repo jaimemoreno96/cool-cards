@@ -15,7 +15,6 @@ const nextConfig = {
         pathname: "/**",
       },
     ],
-    domains: ['localhost'],
     formats: ['image/webp'],
     minimumCacheTTL: 60,
   },

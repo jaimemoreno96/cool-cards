@@ -1,4 +1,5 @@
-import { JsonValue } from "@prisma/client/runtime/library";
+import { JsonValue } from "@prisma/client/runtime/client";
+
 import { UserDtoType } from "./users";
 import { BaseResponse } from "@/app/types/base";
 

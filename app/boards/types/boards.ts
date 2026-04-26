@@ -1,6 +1,7 @@
+import { JsonValue } from "@prisma/client/runtime/client";
+
 import { UserDtoType } from "@/app/projects/types/users";
 import { BaseResponse } from "@/app/types/base";
-import { JsonValue } from "@prisma/client/runtime/library";
 
 export interface BoardType {
   projectId: string | null;

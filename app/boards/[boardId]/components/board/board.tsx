@@ -118,12 +118,27 @@ const Board = () => {
     [columns]
   );
 
+  const calculatePosition = (prev?: number, next?: number): number => {
+    if (!prev && !next) return 1650.123;
+    if (!prev) return next! / 2;
+    if (!next) return prev + 1650.123;
+    return (prev + next) / 2;
+  };
+
   return (
     <div className="h-full w-full">
       <ol className="flex gap-4 h-full overflow-x-auto px-4">
         <DragDropProvider
           onDragStart={() => {
             previousCards.current = cardsByColumn;
+          }}
+          onDragOver={(event) => {
+            const { source, target } = event.operation;
+            console.log("---------------- Drag over events ----------------");
+            
+            console.log("Operation source:", source?.data);
+            console.log("Operation target:", target?.data);
+            
           }}
           onDragEnd={(event) => {
             if (event.canceled) {
@@ -134,6 +149,7 @@ const Board = () => {
                   cards: previousCards.current[col.id] || [],
                 }))
               );
+              return;
             }
             const { source, target } = event.operation;
             if (source?.type === "column") {

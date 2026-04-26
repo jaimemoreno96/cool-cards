@@ -9,7 +9,7 @@ export async function GET(
   request: Request,
   { params }: { params: { projectId: string } }
 ) {
-  const { projectId } = params;
+  const { projectId } = await params;
   console.log("User ID:", projectId);
 
   try {
