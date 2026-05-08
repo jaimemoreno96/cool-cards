@@ -35,5 +35,7 @@ export const PUT = async (request: Request) => {
       { error: "Failed to update favorite board" },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 };

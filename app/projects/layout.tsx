@@ -1,4 +1,4 @@
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/navbar/navbar";
 
 const ProjectsLayout = ({
   children,
@@ -6,8 +6,8 @@ const ProjectsLayout = ({
   return (
     <>
       <Navbar />
-        
-        {children}
+
+      {children}
     </>
   );
 };

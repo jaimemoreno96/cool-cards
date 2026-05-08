@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { DragDropProvider } from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 
@@ -8,13 +8,24 @@ import BoardColumn from "./board-column";
 import AddColumnButton from "./add-column-button";
 
 import { BoardColumnDtoType, CardDtoType } from "@/app/boards/types/boards";
+import { BOARDS_ENUM } from "@/app/boards/enum";
+import AddColumnForm from "./add-column-form";
+import { useBoard } from "@/app/boards/hooks/use-board";
 
-const Board = () => {
+interface BoardProps {
+  userId: string;
+  boardId: string;
+}
+const Board = ({ userId, boardId }: BoardProps) => {
+  const [creatingNewColumn, setCreatingNewColumn] = useState<boolean>(false);
+  const { board, boardError, boardIsLoading } = useBoard(boardId);
+  console.log("Board:", board);
+  
   const [columns, setColumns] = useState<BoardColumnDtoType[]>([
     {
       id: "column-1",
       name: "Column 1",
-      position: 1650.123,
+      position: BOARDS_ENUM.DEFAULT_POSITION,
       boardId: "board-1",
       cards: [
         {
@@ -24,7 +35,7 @@ const Board = () => {
           boardColumnId: "column-1",
           boardId: "board-1",
           userId: "user-1",
-          position: 1650.123,
+          position: BOARDS_ENUM.DEFAULT_POSITION,
         },
         {
           id: "2",
@@ -33,14 +44,14 @@ const Board = () => {
           boardColumnId: "column-1",
           boardId: "board-1",
           userId: "user-1",
-          position: 3300.456,
+          position: BOARDS_ENUM.DEFAULT_POSITION * 2,
         },
       ],
     },
     {
       id: "column-2",
       name: "Column 2",
-      position: 3300.456,
+      position: BOARDS_ENUM.DEFAULT_POSITION * 2,
       boardId: "board-1",
       cards: [
         {
@@ -50,7 +61,7 @@ const Board = () => {
           boardColumnId: "column-2",
           boardId: "board-1",
           userId: "user-1",
-          position: 1650.123,
+          position: BOARDS_ENUM.DEFAULT_POSITION,
         },
         {
           id: "4",
@@ -59,14 +70,14 @@ const Board = () => {
           boardColumnId: "column-2",
           boardId: "board-1",
           userId: "user-1",
-          position: 3300.456,
+          position: BOARDS_ENUM.DEFAULT_POSITION * 2,
         },
       ],
     },
     {
       id: "column-3",
       name: "Column 3",
-      position: 4950.789,
+      position: BOARDS_ENUM.DEFAULT_POSITION * 3,
       boardId: "board-1",
       cards: [
         {
@@ -76,7 +87,7 @@ const Board = () => {
           boardColumnId: "column-3",
           boardId: "board-1",
           userId: "user-1",
-          position: 1650.123,
+          position: BOARDS_ENUM.DEFAULT_POSITION,
         },
         {
           id: "6",
@@ -85,7 +96,7 @@ const Board = () => {
           boardColumnId: "column-3",
           boardId: "board-1",
           userId: "user-1",
-          position: 3300.456,
+          position: BOARDS_ENUM.DEFAULT_POSITION * 2,
         },
       ],
     },
@@ -107,8 +118,6 @@ const Board = () => {
     }, {})
   );
 
-  const previousCards = useRef<Record<string, CardDtoType[]>>({});
-
   const cardsByColumn = useMemo(
     () =>
       columns.reduce<Record<string, CardDtoType[]>>((acc, col) => {
@@ -119,9 +128,9 @@ const Board = () => {
   );
 
   const calculatePosition = (prev?: number, next?: number): number => {
-    if (!prev && !next) return 1650.123;
+    if (!prev && !next) return BOARDS_ENUM.DEFAULT_POSITION;
     if (!prev) return next! / 2;
-    if (!next) return prev + 1650.123;
+    if (!next) return prev + BOARDS_ENUM.DEFAULT_POSITION;
     return (prev + next) / 2;
   };
 
@@ -129,105 +138,105 @@ const Board = () => {
     <div className="h-full w-full">
       <ol className="flex gap-4 h-full overflow-x-auto px-4">
         <DragDropProvider
-          onDragStart={() => {
-            previousCards.current = cardsByColumn;
-          }}
+          onDragStart={() => {}}
           onDragOver={(event) => {
             const { source, target } = event.operation;
-            console.log("---------------- Drag over events ----------------");
-            
-            console.log("Operation source:", source?.data);
-            console.log("Operation target:", target?.data);
-            
+
+            if (source?.data?.id !== target?.data?.id) {
+              console.log("---------------- Drag over events ----------------");
+
+              console.log("Operation source:", source?.data);
+              console.log("Operation target:", target?.data);
+            }
           }}
           onDragEnd={(event) => {
-            if (event.canceled) {
-              // Restore previous state on cancel
-              setColumns((prev) =>
-                prev.map((col) => ({
-                  ...col,
-                  cards: previousCards.current[col.id] || [],
-                }))
-              );
-              return;
-            }
             const { source, target } = event.operation;
+
+            console.log(source?.id, target?.id );
+            
+
+            console.log(
+              "Source and target:",
+              source?.data?.id,
+              target?.data?.id
+            );
+            return;
+
             if (source?.type === "column") {
-              setColumnOrder((columns) => {
-                const newOrder = move(columns, event);
-                console.log("New column order:", newOrder);
-                const columnIndexAfterMove = newOrder.findIndex(
-                  (col) => col.id === source.id
-                );
-                const lastIndex = newOrder.length - 1;
+              if (target?.type === "column") {
+                setColumnOrder((columns) => {
+                  const newOrder = move(columns, event);
+                  const columnIndexAfterMove = newOrder.findIndex(
+                    (col) => col.id === source?.id
+                  );
 
-                if (columnIndexAfterMove !== -1) {
-                  if (columnIndexAfterMove === lastIndex) {
-                    console.log("Moved to the end of the list");
-                    const nextColumn = newOrder[columnIndexAfterMove + 1];
-                  }
+                  const prevCol = newOrder[columnIndexAfterMove - 1];
+                  const nextCol = newOrder[columnIndexAfterMove + 1];
+                  const newPosition = calculatePosition(
+                    prevCol?.position,
+                    nextCol?.position
+                  );
 
-                  if (columnIndexAfterMove === 0) {
-                    console.log("Moved to the beginning of the list");
-                    const previousColumn = newOrder[columnIndexAfterMove - 1];
-                  }
-
-                  const previousColumn = newOrder[columnIndexAfterMove - 1];
-                  const nextColumn = newOrder[columnIndexAfterMove + 1];
-                }
-
-                return newOrder;
-              });
+                  return newOrder.map((col) =>
+                    col.id === source?.id
+                      ? { ...col, position: newPosition }
+                      : col
+                  );
+                });
+              }
+              return;
             }
 
             if (source?.type === "card") {
-              setCards((cards) => {
-                const newOrder = move(cards, event);
-                console.log("New cards order:", newOrder);
+              if (target?.type === "card") {
+                setCards((cards) => {
+                  const newOrder = move(cards, event);
+                  const columnId = Object.keys(newOrder).find((key) =>
+                    newOrder[key].some((card) => card.id === source?.id)
+                  );
 
-                console.log("Source card ID:", target?.id);
+                  if (!columnId) return cards;
 
-                const columId = Object.keys(newOrder).find((key) =>
-                  newOrder[key].some((card) => card.id === source.id)
-                );
-                console.log("Column ID after move:", columId);
+                  const cardIndexAfterMove = newOrder[columnId].findIndex(
+                    (card) => card.id === source?.id
+                  );
 
-                const cardIndexAfterMove = newOrder[columId || ""].findIndex(
-                  (card) => card.id === source.id
-                );
+                  const prevCard = newOrder[columnId][cardIndexAfterMove - 1];
+                  const nextCard = newOrder[columnId][cardIndexAfterMove + 1];
+                  const newPosition = calculatePosition(
+                    prevCard?.position,
+                    nextCard?.position
+                  );
 
-                console.log("Card index after move:", cardIndexAfterMove);
-
-                const lastIndex = newOrder[target?.id || ""]?.length - 1;
-                if (cardIndexAfterMove !== -1) {
-                  if (cardIndexAfterMove === lastIndex) {
-                    console.log("Moved to the end of the list");
-                    const nextCard =
-                      newOrder[target?.id || ""]?.[cardIndexAfterMove + 1];
-                  }
-
-                  if (cardIndexAfterMove === 0) {
-                    console.log("Moved to the beginning of the list");
-                    const previousCard =
-                      newOrder[target?.id || ""]?.[cardIndexAfterMove - 1];
-                  }
-
-                  const previousCard =
-                    newOrder[target?.id || ""]?.[cardIndexAfterMove - 1];
-                  const nextCard =
-                    newOrder[target?.id || ""]?.[cardIndexAfterMove + 1];
-                }
-                return newOrder;
-              });
+                  return {
+                    ...newOrder,
+                    [columnId]: newOrder[columnId].map((card) =>
+                      card.id === source?.id
+                        ? { ...card, position: newPosition }
+                        : card
+                    ),
+                  };
+                });
+              }
+              return;
             }
           }}
         >
-          {columns.map((column, index) => (
+          {board.boardColumns?.map((column, index) => (
             <BoardColumn key={index} index={index} column={column} />
           ))}
         </DragDropProvider>
         <li className="flex flex-col align-center shrink-0 w-72 min-w-72 h-fit">
-          <AddColumnButton />
+          {creatingNewColumn ? (
+            <AddColumnForm
+              userId={userId}
+              boardId={boardId}
+              lastpostion={columnOrder[columnOrder.length - 1].position + BOARDS_ENUM.DEFAULT_POSITION}
+              onClick={() => setCreatingNewColumn(false)}
+            />
+          ) : (
+            <AddColumnButton userId={userId} onClick={() => setCreatingNewColumn(true)} />
+          )}
         </li>
       </ol>
     </div>

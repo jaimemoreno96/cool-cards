@@ -26,9 +26,17 @@ export const boardMembersSchema = z.object({
   members: z.string().optional(),
 });
 
+export const newBoardColumnSchema = z.object({
+  name: z
+    .string({ required_error: "Column name is required" })
+    .min(1, "Column name is required")
+    .max(64, "Column name must be less than 64 characters"),
+})
+
 export type ProjectInfoType = z.infer<typeof projectInfoSchema>;
 export type ProjectMembersType = z.infer<typeof projectMembersSchema>;
 export type ProjectType = ProjectInfoType & ProjectMembersType;
 export type Board = z.infer<typeof boardSchema>;
 export type BoardInfoType = z.infer<typeof boardSchema>;
 export type BoardMembersType = z.infer<typeof boardMembersSchema>;
+export type BoardColumnSchemaType = z.infer<typeof newBoardColumnSchema>;

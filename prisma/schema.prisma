@@ -16,10 +16,10 @@ model Card {
   updatedAt   DateTime @updatedAt
   description String?  @db.Text
   image       String?
-  name        String?
+  name        String
   members     Json?    @db.Json
   tags        Json?    @db.Json
-  position    Int
+  position    Float
   user        User?    @relation(fields: [userId], references: [id])
   board       Board?   @relation(fields: [boardId], references: [id])
   boardColumn BoardColumn? @relation(fields: [boardColumnId], references: [id])
@@ -31,7 +31,7 @@ model BoardColumn {
   id        String   @id @default(cuid())
   boardId   String
   name      String
-  position  Int
+  position  Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   board     Board?   @relation(fields: [boardId], references: [id], onDelete: Cascade)

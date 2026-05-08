@@ -8,7 +8,7 @@ import {
 import { useProjectsStore } from "@/app/store/projects";
 
 import { ProjectType } from "../lib/definitions";
-import { updateProject } from "../../boards/data/project";
+import { updateProject } from "../../boards/services/project-service";
 import { UserDtoType } from "@/app/projects/types/users";
 
 const fetcher = (url: string) =>

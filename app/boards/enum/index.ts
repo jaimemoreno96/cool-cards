@@ -1,0 +1,3 @@
+export enum BOARDS_ENUM { 
+    DEFAULT_POSITION = 1650.123,
+}

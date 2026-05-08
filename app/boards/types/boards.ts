@@ -48,7 +48,7 @@ export interface BoardDtoType {
   id: string;
   userId: string;
   description?: string;
-  imageName?: string | null;
+  imageName?: string | null
   imageUrl?: string | null;
   members?: JsonValue | null;
   membersData?: UserDtoType[] | null;
@@ -68,7 +68,7 @@ export interface CardDtoType {
   boardId: string;
   boardColumnId: string;
   name: string;
-  description?: string;
+  description?: string | null;
   position: number;
   tags?: JsonValue | null;
   image?: string | null;
@@ -88,6 +88,7 @@ export interface BoardsResponse extends BaseResponse {
 export interface BoardResponse extends BaseResponse {
   board?: BoardDtoType;
   members?: UserDtoType[];
+  boardColumns?: BoardColumnDtoType[];
 }
 
 export interface UpdateBoardResponse extends BaseResponse {
@@ -97,6 +98,10 @@ export interface UpdateBoardResponse extends BaseResponse {
 
 export interface NewBoardResponse extends BaseResponse {
   board: BoardDtoType;
+}
+
+export interface BoardColumnResponse extends BaseResponse {
+  boardColumn: BoardColumnDtoType;
 }
 
 export interface CreateBoardData {

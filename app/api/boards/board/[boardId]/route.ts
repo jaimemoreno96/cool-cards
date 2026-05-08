@@ -1,5 +1,9 @@
-import { boardDto } from "@/app/boards/dto/board";
-import { BoardType } from "@/app/boards/types/boards";
+import { boardDto, cardDto } from "@/app/boards/dto/board";
+import {
+  BoardColumnDtoType,
+  BoardType,
+  CardType,
+} from "@/app/boards/types/boards";
 import { projectDto } from "@/app/projects/dto/project";
 import { userDto } from "@/app/projects/dto/user";
 import { ProjectType } from "@/app/projects/types/projects";
@@ -42,8 +46,38 @@ export async function GET(
       membersArray = members.map(userDto);
     }
 
+    const boardColumns = await prisma.boardColumn.findMany({
+      where: {
+        boardId: boardId as string,
+      },
+    });
+
+    const mappedBoardColumns: BoardColumnDtoType[] = await Promise.all(
+      boardColumns.map(async (column) => {
+        const cards: CardType[] = await prisma.card.findMany({
+          where: {
+            boardColumnId: column.id,
+          },
+        });
+
+        return {
+          id: column.id,
+          boardId: column.boardId,
+          name: column.name,
+          position: column.position,
+          createdAt: column.createdAt,
+          updatedAt: column.updatedAt,
+          cards: cards.map(cardDto),
+        };
+      })
+    );
+
     return NextResponse.json(
-      { board: mappedBoard, members: membersArray },
+      {
+        board: mappedBoard,
+        members: membersArray,
+        boardColumns: mappedBoardColumns,
+      },
       { headers: { "Content-Type": "application/json" }, status: 200 }
     );
   } catch (error) {

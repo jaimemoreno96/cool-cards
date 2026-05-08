@@ -19,8 +19,6 @@ import {
   boardMembersSchema,
   BoardMembersType,
 } from "../../../lib/definitions";
-import { updateBoard } from "../../../data/board";
-import { BoardDtoType } from "../../../types/boards";
 import { UserDtoType } from "../../../types/users";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import BoardMembersDialog from "./board-members-dialog";

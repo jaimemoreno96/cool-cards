@@ -222,7 +222,7 @@ export type CardGroupByOutputType = {
   updatedAt: Date
   description: string | null
   image: string | null
-  name: string | null
+  name: string
   members: runtime.JsonValue | null
   tags: runtime.JsonValue | null
   position: number
@@ -260,10 +260,10 @@ export type CardWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Card"> | Date | string
   description?: Prisma.StringNullableFilter<"Card"> | string | null
   image?: Prisma.StringNullableFilter<"Card"> | string | null
-  name?: Prisma.StringNullableFilter<"Card"> | string | null
+  name?: Prisma.StringFilter<"Card"> | string
   members?: Prisma.JsonNullableFilter<"Card">
   tags?: Prisma.JsonNullableFilter<"Card">
-  position?: Prisma.IntFilter<"Card"> | number
+  position?: Prisma.FloatFilter<"Card"> | number
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   board?: Prisma.XOR<Prisma.BoardNullableScalarRelationFilter, Prisma.BoardWhereInput> | null
   boardColumn?: Prisma.XOR<Prisma.BoardColumnNullableScalarRelationFilter, Prisma.BoardColumnWhereInput> | null
@@ -278,7 +278,7 @@ export type CardOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
-  name?: Prisma.SortOrderInput | Prisma.SortOrder
+  name?: Prisma.SortOrder
   members?: Prisma.SortOrderInput | Prisma.SortOrder
   tags?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
@@ -300,10 +300,10 @@ export type CardWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"Card"> | Date | string
   description?: Prisma.StringNullableFilter<"Card"> | string | null
   image?: Prisma.StringNullableFilter<"Card"> | string | null
-  name?: Prisma.StringNullableFilter<"Card"> | string | null
+  name?: Prisma.StringFilter<"Card"> | string
   members?: Prisma.JsonNullableFilter<"Card">
   tags?: Prisma.JsonNullableFilter<"Card">
-  position?: Prisma.IntFilter<"Card"> | number
+  position?: Prisma.FloatFilter<"Card"> | number
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   board?: Prisma.XOR<Prisma.BoardNullableScalarRelationFilter, Prisma.BoardWhereInput> | null
   boardColumn?: Prisma.XOR<Prisma.BoardColumnNullableScalarRelationFilter, Prisma.BoardColumnWhereInput> | null
@@ -318,7 +318,7 @@ export type CardOrderByWithAggregationInput = {
   updatedAt?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
-  name?: Prisma.SortOrderInput | Prisma.SortOrder
+  name?: Prisma.SortOrder
   members?: Prisma.SortOrderInput | Prisma.SortOrder
   tags?: Prisma.SortOrderInput | Prisma.SortOrder
   position?: Prisma.SortOrder
@@ -341,10 +341,10 @@ export type CardScalarWhereWithAggregatesInput = {
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Card"> | Date | string
   description?: Prisma.StringNullableWithAggregatesFilter<"Card"> | string | null
   image?: Prisma.StringNullableWithAggregatesFilter<"Card"> | string | null
-  name?: Prisma.StringNullableWithAggregatesFilter<"Card"> | string | null
+  name?: Prisma.StringWithAggregatesFilter<"Card"> | string
   members?: Prisma.JsonNullableWithAggregatesFilter<"Card">
   tags?: Prisma.JsonNullableWithAggregatesFilter<"Card">
-  position?: Prisma.IntWithAggregatesFilter<"Card"> | number
+  position?: Prisma.FloatWithAggregatesFilter<"Card"> | number
 }
 
 export type CardCreateInput = {
@@ -353,7 +353,7 @@ export type CardCreateInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -371,7 +371,7 @@ export type CardUncheckedCreateInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -383,10 +383,10 @@ export type CardUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutCardsNestedInput
   board?: Prisma.BoardUpdateOneWithoutCardsNestedInput
   boardColumn?: Prisma.BoardColumnUpdateOneWithoutCardsNestedInput
@@ -401,10 +401,10 @@ export type CardUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type CardCreateManyInput = {
@@ -416,7 +416,7 @@ export type CardCreateManyInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -428,10 +428,10 @@ export type CardUpdateManyMutationInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type CardUncheckedUpdateManyInput = {
@@ -443,10 +443,10 @@ export type CardUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type CardOrderByRelevanceInput = {
@@ -526,7 +526,7 @@ export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
 }
 
-export type IntFieldUpdateOperationsInput = {
+export type FloatFieldUpdateOperationsInput = {
   set?: number
   increment?: number
   decrement?: number
@@ -666,7 +666,7 @@ export type CardCreateWithoutBoardColumnInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -682,7 +682,7 @@ export type CardUncheckedCreateWithoutBoardColumnInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -726,10 +726,10 @@ export type CardScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"Card"> | Date | string
   description?: Prisma.StringNullableFilter<"Card"> | string | null
   image?: Prisma.StringNullableFilter<"Card"> | string | null
-  name?: Prisma.StringNullableFilter<"Card"> | string | null
+  name?: Prisma.StringFilter<"Card"> | string
   members?: Prisma.JsonNullableFilter<"Card">
   tags?: Prisma.JsonNullableFilter<"Card">
-  position?: Prisma.IntFilter<"Card"> | number
+  position?: Prisma.FloatFilter<"Card"> | number
 }
 
 export type CardCreateWithoutBoardInput = {
@@ -738,7 +738,7 @@ export type CardCreateWithoutBoardInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -754,7 +754,7 @@ export type CardUncheckedCreateWithoutBoardInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -792,7 +792,7 @@ export type CardCreateWithoutUserInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -808,7 +808,7 @@ export type CardUncheckedCreateWithoutUserInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -848,7 +848,7 @@ export type CardCreateManyBoardColumnInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -860,10 +860,10 @@ export type CardUpdateWithoutBoardColumnInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutCardsNestedInput
   board?: Prisma.BoardUpdateOneWithoutCardsNestedInput
 }
@@ -876,10 +876,10 @@ export type CardUncheckedUpdateWithoutBoardColumnInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type CardUncheckedUpdateManyWithoutBoardColumnInput = {
@@ -890,10 +890,10 @@ export type CardUncheckedUpdateManyWithoutBoardColumnInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type CardCreateManyBoardInput = {
@@ -904,7 +904,7 @@ export type CardCreateManyBoardInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -916,10 +916,10 @@ export type CardUpdateWithoutBoardInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   user?: Prisma.UserUpdateOneWithoutCardsNestedInput
   boardColumn?: Prisma.BoardColumnUpdateOneWithoutCardsNestedInput
 }
@@ -932,10 +932,10 @@ export type CardUncheckedUpdateWithoutBoardInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type CardUncheckedUpdateManyWithoutBoardInput = {
@@ -946,10 +946,10 @@ export type CardUncheckedUpdateManyWithoutBoardInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type CardCreateManyUserInput = {
@@ -960,7 +960,7 @@ export type CardCreateManyUserInput = {
   updatedAt?: Date | string
   description?: string | null
   image?: string | null
-  name?: string | null
+  name: string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   position: number
@@ -972,10 +972,10 @@ export type CardUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   board?: Prisma.BoardUpdateOneWithoutCardsNestedInput
   boardColumn?: Prisma.BoardColumnUpdateOneWithoutCardsNestedInput
 }
@@ -988,10 +988,10 @@ export type CardUncheckedUpdateWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type CardUncheckedUpdateManyWithoutUserInput = {
@@ -1002,10 +1002,10 @@ export type CardUncheckedUpdateManyWithoutUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   tags?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 
@@ -1068,7 +1068,7 @@ export type $CardPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     updatedAt: Date
     description: string | null
     image: string | null
-    name: string | null
+    name: string
     members: runtime.JsonValue | null
     tags: runtime.JsonValue | null
     position: number
@@ -1455,7 +1455,7 @@ export interface CardFieldRefs {
   readonly name: Prisma.FieldRef<"Card", 'String'>
   readonly members: Prisma.FieldRef<"Card", 'Json'>
   readonly tags: Prisma.FieldRef<"Card", 'Json'>
-  readonly position: Prisma.FieldRef<"Card", 'Int'>
+  readonly position: Prisma.FieldRef<"Card", 'Float'>
 }
     
 

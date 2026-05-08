@@ -4,7 +4,7 @@ import { StarIcon } from "lucide-react";
 import { cachedAuth } from "./lib/session";
 
 import { Separator } from "@/components/ui/separator";
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/navbar/navbar";
 
 import { ProjectsList } from "./projects/components/projects-list";
 import FavoriteProjectsList from "./projects/components/favorite-projects-list/favorite-projects-list";

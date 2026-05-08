@@ -1,15 +1,28 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-
-import { signOut } from "@/auth";
-
-import { Button } from "./ui/button";
 import { MenuIcon } from "lucide-react";
 
+import { Button } from "../ui/button";
+import Logout from "./logout";
 
 const Navbar = () => {
+  const elementRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    // Safely check if we are in the browser environment
+    if (elementRef.current) {
+      const height = elementRef.current.getBoundingClientRect().height;
+      console.log("Component height:", height);
+      // You can now use the height value (e.g., save it in a state)
+    }
+  }, []);
   return (
-    <nav className="bg-white p-2 text-black shadow-md w-full z-0">
+    <nav
+      ref={elementRef}
+      className="bg-white p-2 text-black shadow-md w-full z-0"
+    >
       <div className="flex justify-between items-center w-full">
         <div className="text-2xl font-bold">
           <Link href="/">
@@ -34,19 +47,12 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <form
-              action={async () => {
-                "use server";
-                await signOut();
-              }}
-            >
-              <Button className="rounded-sm text-sm font-normal" type="submit">
-                Sign Out
-              </Button>
-            </form>
+           <Logout />
           </li>
         </ul>
-        <Button className="md:hidden"><MenuIcon /></Button>
+        <Button className="md:hidden">
+          <MenuIcon />
+        </Button>
       </div>
     </nav>
   );

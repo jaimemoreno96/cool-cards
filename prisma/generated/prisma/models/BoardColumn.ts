@@ -221,7 +221,7 @@ export type BoardColumnWhereInput = {
   id?: Prisma.StringFilter<"BoardColumn"> | string
   boardId?: Prisma.StringFilter<"BoardColumn"> | string
   name?: Prisma.StringFilter<"BoardColumn"> | string
-  position?: Prisma.IntFilter<"BoardColumn"> | number
+  position?: Prisma.FloatFilter<"BoardColumn"> | number
   createdAt?: Prisma.DateTimeFilter<"BoardColumn"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BoardColumn"> | Date | string
   board?: Prisma.XOR<Prisma.BoardNullableScalarRelationFilter, Prisma.BoardWhereInput> | null
@@ -247,7 +247,7 @@ export type BoardColumnWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.BoardColumnWhereInput | Prisma.BoardColumnWhereInput[]
   boardId?: Prisma.StringFilter<"BoardColumn"> | string
   name?: Prisma.StringFilter<"BoardColumn"> | string
-  position?: Prisma.IntFilter<"BoardColumn"> | number
+  position?: Prisma.FloatFilter<"BoardColumn"> | number
   createdAt?: Prisma.DateTimeFilter<"BoardColumn"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BoardColumn"> | Date | string
   board?: Prisma.XOR<Prisma.BoardNullableScalarRelationFilter, Prisma.BoardWhereInput> | null
@@ -275,7 +275,7 @@ export type BoardColumnScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"BoardColumn"> | string
   boardId?: Prisma.StringWithAggregatesFilter<"BoardColumn"> | string
   name?: Prisma.StringWithAggregatesFilter<"BoardColumn"> | string
-  position?: Prisma.IntWithAggregatesFilter<"BoardColumn"> | number
+  position?: Prisma.FloatWithAggregatesFilter<"BoardColumn"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"BoardColumn"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"BoardColumn"> | Date | string
 }
@@ -303,7 +303,7 @@ export type BoardColumnUncheckedCreateInput = {
 export type BoardColumnUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   board?: Prisma.BoardUpdateOneWithoutBoardColumnsNestedInput
@@ -314,7 +314,7 @@ export type BoardColumnUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cards?: Prisma.CardUncheckedUpdateManyWithoutBoardColumnNestedInput
@@ -332,7 +332,7 @@ export type BoardColumnCreateManyInput = {
 export type BoardColumnUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -341,7 +341,7 @@ export type BoardColumnUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -497,7 +497,7 @@ export type BoardColumnUpdateToOneWithWhereWithoutCardsInput = {
 export type BoardColumnUpdateWithoutCardsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   board?: Prisma.BoardUpdateOneWithoutBoardColumnsNestedInput
@@ -507,7 +507,7 @@ export type BoardColumnUncheckedUpdateWithoutCardsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   boardId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -563,7 +563,7 @@ export type BoardColumnScalarWhereInput = {
   id?: Prisma.StringFilter<"BoardColumn"> | string
   boardId?: Prisma.StringFilter<"BoardColumn"> | string
   name?: Prisma.StringFilter<"BoardColumn"> | string
-  position?: Prisma.IntFilter<"BoardColumn"> | number
+  position?: Prisma.FloatFilter<"BoardColumn"> | number
   createdAt?: Prisma.DateTimeFilter<"BoardColumn"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"BoardColumn"> | Date | string
 }
@@ -579,7 +579,7 @@ export type BoardColumnCreateManyBoardInput = {
 export type BoardColumnUpdateWithoutBoardInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cards?: Prisma.CardUpdateManyWithoutBoardColumnNestedInput
@@ -588,7 +588,7 @@ export type BoardColumnUpdateWithoutBoardInput = {
 export type BoardColumnUncheckedUpdateWithoutBoardInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   cards?: Prisma.CardUncheckedUpdateManyWithoutBoardColumnNestedInput
@@ -597,7 +597,7 @@ export type BoardColumnUncheckedUpdateWithoutBoardInput = {
 export type BoardColumnUncheckedUpdateManyWithoutBoardInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
-  position?: Prisma.IntFieldUpdateOperationsInput | number
+  position?: Prisma.FloatFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1050,7 +1050,7 @@ export interface BoardColumnFieldRefs {
   readonly id: Prisma.FieldRef<"BoardColumn", 'String'>
   readonly boardId: Prisma.FieldRef<"BoardColumn", 'String'>
   readonly name: Prisma.FieldRef<"BoardColumn", 'String'>
-  readonly position: Prisma.FieldRef<"BoardColumn", 'Int'>
+  readonly position: Prisma.FieldRef<"BoardColumn", 'Float'>
   readonly createdAt: Prisma.FieldRef<"BoardColumn", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"BoardColumn", 'DateTime'>
 }

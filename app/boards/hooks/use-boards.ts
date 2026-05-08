@@ -6,7 +6,7 @@ import { Board } from "../lib/definitions";
 import { BoardDtoType, BoardImage, NewBoardResponse } from "../types/boards";
 
 import { BoardsResponse } from "../types/boards";
-import { createBoard, fetchImages, setFavoriteBoard } from "../data/board";
+import boardService from "../services/board-service";
 import { mergeOptimisticUpdates } from "@/app/lib/merge-optimistic-updates";
 
 const fetcher = (url: string) =>
@@ -45,7 +45,7 @@ export const useBoards = (userId?: string, projectId?: string) => {
     isFavorite: boolean
   ) => {
     try {
-      const response = await setFavoriteBoard(boardId, userId, isFavorite);
+      const response = await boardService.setFavoriteBoard(boardId, userId, isFavorite);
       if (response.status !== 200) {
         throw new Error("Failed to update");
       }
@@ -76,7 +76,7 @@ export const useBoards = (userId?: string, projectId?: string) => {
     setOptimisticBoards(optimisticBoard);
 
     try {
-      const response = await createBoard(
+      const response = await boardService.createBoard(
         userId,
         projectId || "",
         boardData,
@@ -97,7 +97,7 @@ export const useBoards = (userId?: string, projectId?: string) => {
 
   const getImages = async () => {
     try {
-      const images = await fetchImages();
+      const images = await boardService.fetchImages();
       if (images) {
         console.log("Fetched images:", images);
         setSelectableBoardImages(images);

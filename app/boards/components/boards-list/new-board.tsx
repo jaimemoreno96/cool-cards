@@ -1,8 +1,10 @@
 "use client";
 
-import { useCallback, useMemo, useReducer, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import Image from "next/image";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CheckIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -26,7 +28,7 @@ import {
 } from "@/components/ui/form";
 import { Badge } from "@/components/ui/badge";
 
-import { getMembersByEmail } from "../../data/user";
+import { getMembersByEmail } from "../../services/user-service";
 
 import { useBoards } from "../../hooks/use-boards";
 
@@ -35,10 +37,8 @@ import { Board, boardSchema } from "../../lib/definitions";
 import { UserDtoType } from "../../types/users";
 import { debounce } from "@/app/utils/debounce";
 import MemberList from "@/components/member-list/member-list";
-import { fetchImages } from "../../data/board";
+import boardService from "../../services/board-service";
 import { BoardImage } from "../../types/boards";
-import Image from "next/image";
-import { CheckCircle, CheckCircleIcon, CheckIcon } from "lucide-react";
 
 interface NewBoardProps {
   userId: string;
@@ -185,7 +185,7 @@ const NewBoard = ({ userId, projectId, children }: NewBoardProps) => {
       open={open}
       onOpenChange={async () => {
         if (!open) {
-          const images = await fetchImages();
+          const images = await boardService.fetchImages();
           setImages(images);
         } else {
           setSelectedImage(null);

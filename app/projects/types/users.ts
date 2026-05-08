@@ -1,5 +1,4 @@
-import { $Enums } from "@prisma/client";
-
+import { $Enums } from "@/prisma/generated/prisma/client";
 
 export enum UserRoles {
     ADMIN = "ADMIN",

@@ -7,7 +7,7 @@ import CardItem from "./card-item";
 import AddCardButton from "./add-card-button";
 import BoardColumnHeader from "./board-column-header";
 
-import { BoardColumnDtoType, CardDtoType } from "@/app/boards/types/boards";
+import { BoardColumnDtoType } from "@/app/boards/types/boards";
 
 interface BoardColumnProps {
   index: number;
@@ -29,11 +29,11 @@ const BoardColumn = ({ index, column }: BoardColumnProps) => {
       ref={ref}
       className="flex flex-col align-center gap-2 bg-gray-100 shrink-0 w-72 min-w-72 h-fit max-h-4/5 rounded-md"
     >
-      <BoardColumnHeader index={index} />
+      <BoardColumnHeader index={index} name={column.name} />
       <ol className="flex flex-col gap-4 w-full h-full overflow-y-auto">
-        {column.cards?.map((card, index) => (
+        {column.cards ? column.cards?.map((card, index) => (
           <CardItem key={index} index={index} card={card} />
-        ))}
+        )) : <li className="p-4">No cards</li>}
       </ol>
       <AddCardButton />
     </li>

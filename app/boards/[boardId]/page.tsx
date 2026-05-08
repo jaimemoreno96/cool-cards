@@ -25,7 +25,7 @@ const ProjectBoardsPage = async ({
     <div className="flex flex-col gap-4 h-[calc(100vh-56.5px)] w-full bg-linear-to-r bg-scroll from-cyan-500 to-blue-500">
       <BoardInfo userId={user.id} boardId={boardId} />
       <div className="flex-1 h-full">
-        <Board />
+        <Board userId={user.id} boardId={boardId} />
       </div>
     </div>
   );
