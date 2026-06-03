@@ -8,7 +8,7 @@ interface CardItemProps {
 }
 const CardItem = ({ card, index }: CardItemProps) => {
 
-  const { ref } = useSortable({
+  const { ref, isDragging } = useSortable({
     id: card.id,
     index,
     type: "card",
@@ -19,6 +19,7 @@ const CardItem = ({ card, index }: CardItemProps) => {
   return (
     <li
       ref={ref}
+      data-dragging={isDragging}
       className="bg-white rounded-md mx-2 p-2 shadow-sm hover:shadow-md transition-shadow cursor-pointer border border-gray-200"
     >
       <h4 className="text-sm font-medium text-gray-900">{card.name}</h4>

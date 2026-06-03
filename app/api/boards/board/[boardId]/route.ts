@@ -1,15 +1,14 @@
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
+
 import { boardDto, cardDto } from "@/app/boards/dto/board";
 import {
   BoardColumnDtoType,
   BoardType,
   CardType,
 } from "@/app/boards/types/boards";
-import { projectDto } from "@/app/projects/dto/project";
 import { userDto } from "@/app/projects/dto/user";
-import { ProjectType } from "@/app/projects/types/projects";
 import { UserDtoType } from "@/app/projects/types/users";
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
 
 export async function GET(
   request: Request,
@@ -49,6 +48,9 @@ export async function GET(
     const boardColumns = await prisma.boardColumn.findMany({
       where: {
         boardId: boardId as string,
+      },
+      orderBy: {
+        position: "asc",
       },
     });
 

@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import useSWR from "swr";
 
-import { BoardResponse } from "../types/boards";
+import { BoardColumnDtoType, BoardResponse } from "../types/boards";
 import { Board } from "../lib/definitions";
 import boardService from "../services/board-service";
 
@@ -72,17 +72,17 @@ export const useBoard = (boardId: string) => {
     }
   };
 
-  const moveBoardColumn = async (
+  const updateBoardColumn = async (
     userId: string,
-    boardId: string,
     boardColumnId: string,
+    boardColumnName: string,
     position: number
   ) => {
     try {
       const response = await boardService.updateBoardColumn(
         userId,
-        boardId,
         boardColumnId,
+        boardColumnName,
         position
       );
       console.log("Move Column Response:", response);
@@ -95,6 +95,56 @@ export const useBoard = (boardId: string) => {
     }
   };
 
+  const addCard = async (
+    userId: string,
+    boardId: string,
+    boardColumnId: string,
+    cardName: string,
+    position: number
+  ) => {
+    // Optimistic update
+    mutate(
+      (board: any) => ({
+        ...board,
+        boardColumns: (boardColumns || []).map((column: BoardColumnDtoType) => {
+          if (column.id === boardColumnId) {
+            return {
+              ...column,
+              cards: [
+                ...(column.cards || []),
+                {
+                  id: "temp-id",
+                  userId,
+                  boardId: board.id,
+                  boardColumnId,
+                  name: cardName,
+                  position,
+                },
+              ],
+            };
+          }
+          return column;
+        }),
+      }),
+      false
+    );
+    try {
+      const response = await boardService.createCard(
+        userId,
+        boardId,
+        boardColumnId,
+        cardName,
+        position
+      );
+      if (response.status !== 200) throw new Error("Failed to add card");
+      await mutate();
+      return response;
+    } catch (error) {
+      await mutate();
+      throw error;
+    }
+  };
+
   return {
     board: {
       board,
@@ -102,8 +152,9 @@ export const useBoard = (boardId: string) => {
       boardColumns,
     },
     addBoardColumn,
+    addCard,
     updateSelectedBoard,
-    moveBoardColumn,
+    updateBoardColumn,
     boardError: error,
     boardIsLoading: isLoading,
     mutateBoard: mutate,

@@ -1,11 +1,10 @@
-"use client";
-
 import Image from "next/image";
 
 import { signIn } from "@/auth";
 
 import googleIcon from "../assets/google.svg";
 import githubIcon from "../assets/github.svg";
+import { signInWithProvider } from "../actions/auth";
 
 const ProvidersButtons = () => {
   return (
@@ -13,7 +12,7 @@ const ProvidersButtons = () => {
       <button
         type="button"
         onClick={() => {
-          signIn("google");
+          signInWithProvider("google");
         }}
       >
         <Image src={googleIcon} alt="google" width={40} height={40} />

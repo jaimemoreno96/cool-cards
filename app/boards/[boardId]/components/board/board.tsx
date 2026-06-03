@@ -6,11 +6,13 @@ import { move } from "@dnd-kit/helpers";
 
 import BoardColumn from "./board-column";
 import AddColumnButton from "./add-column-button";
-
-import { BoardColumnDtoType, CardDtoType } from "@/app/boards/types/boards";
-import { BOARDS_ENUM } from "@/app/boards/enum";
 import AddColumnForm from "./add-column-form";
+
+import boardService from "@/app/boards/services/board-service";
 import { useBoard } from "@/app/boards/hooks/use-board";
+
+import { CardDtoType } from "@/app/boards/types/boards";
+import { BOARDS_ENUM } from "@/app/boards/enum";
 
 interface BoardProps {
   userId: string;
@@ -18,113 +20,31 @@ interface BoardProps {
 }
 const Board = ({ userId, boardId }: BoardProps) => {
   const [creatingNewColumn, setCreatingNewColumn] = useState<boolean>(false);
-  const { board, boardError, boardIsLoading } = useBoard(boardId);
+  const { board, updateBoardColumn, boardError, boardIsLoading } =
+    useBoard(boardId);
   console.log("Board:", board);
-  
-  const [columns, setColumns] = useState<BoardColumnDtoType[]>([
-    {
-      id: "column-1",
-      name: "Column 1",
-      position: BOARDS_ENUM.DEFAULT_POSITION,
-      boardId: "board-1",
-      cards: [
-        {
-          id: "1",
-          name: "Card 1",
-          description: "Description for Card 1",
-          boardColumnId: "column-1",
-          boardId: "board-1",
-          userId: "user-1",
-          position: BOARDS_ENUM.DEFAULT_POSITION,
-        },
-        {
-          id: "2",
-          name: "Card 2",
-          description: "Description for Card 2",
-          boardColumnId: "column-1",
-          boardId: "board-1",
-          userId: "user-1",
-          position: BOARDS_ENUM.DEFAULT_POSITION * 2,
-        },
-      ],
-    },
-    {
-      id: "column-2",
-      name: "Column 2",
-      position: BOARDS_ENUM.DEFAULT_POSITION * 2,
-      boardId: "board-1",
-      cards: [
-        {
-          id: "3",
-          name: "Card 3",
-          description: "Description for Card 3",
-          boardColumnId: "column-2",
-          boardId: "board-1",
-          userId: "user-1",
-          position: BOARDS_ENUM.DEFAULT_POSITION,
-        },
-        {
-          id: "4",
-          name: "Card 4",
-          description: "Description for Card 4",
-          boardColumnId: "column-2",
-          boardId: "board-1",
-          userId: "user-1",
-          position: BOARDS_ENUM.DEFAULT_POSITION * 2,
-        },
-      ],
-    },
-    {
-      id: "column-3",
-      name: "Column 3",
-      position: BOARDS_ENUM.DEFAULT_POSITION * 3,
-      boardId: "board-1",
-      cards: [
-        {
-          id: "5",
-          name: "Card 5",
-          description: "Description for Card 5",
-          boardColumnId: "column-3",
-          boardId: "board-1",
-          userId: "user-1",
-          position: BOARDS_ENUM.DEFAULT_POSITION,
-        },
-        {
-          id: "6",
-          name: "Card 6",
-          description: "Description for Card 6",
-          boardColumnId: "column-3",
-          boardId: "board-1",
-          userId: "user-1",
-          position: BOARDS_ENUM.DEFAULT_POSITION * 2,
-        },
-      ],
-    },
-  ]);
 
-  const [columnOrder, setColumnOrder] = useState(() =>
-    columns.map((col) => ({
-      id: col.id,
-      name: col.name,
-      position: col.position,
-      boardId: col.boardId,
-    }))
-  );
-
-  const [cards, setCards] = useState<Record<string, CardDtoType[]>>(() =>
-    columns.reduce<Record<string, CardDtoType[]>>((acc, col) => {
-      acc[col.id] = col.cards || [];
-      return acc;
-    }, {})
+  const boardColumns = useMemo(
+    () =>
+      board?.boardColumns?.map((boardColum) => ({
+        id: boardColum.id,
+        name: boardColum.name,
+        position: boardColum.position,
+        boardId: boardColum.boardId,
+      })),
+    [board?.boardColumns]
   );
 
   const cardsByColumn = useMemo(
     () =>
-      columns.reduce<Record<string, CardDtoType[]>>((acc, col) => {
-        acc[col.id] = col.cards || [];
-        return acc;
-      }, {}),
-    [columns]
+      (board?.boardColumns || []).reduce<Record<string, CardDtoType[]>>(
+        (acc, col) => {
+          acc[col.id] = col.cards || [];
+          return acc;
+        },
+        {}
+      ),
+    [board?.boardColumns]
   );
 
   const calculatePosition = (prev?: number, next?: number): number => {
@@ -149,27 +69,27 @@ const Board = ({ userId, boardId }: BoardProps) => {
               console.log("Operation target:", target?.data);
             }
           }}
-          onDragEnd={(event) => {
+          onDragEnd={async (event) => {
             const { source, target } = event.operation;
 
-            console.log(source?.id, target?.id );
-            
+            console.log(source?.id, target?.id);
 
             console.log(
               "Source and target:",
               source?.data?.id,
               target?.data?.id
             );
-            return;
 
             if (source?.type === "column") {
-              if (target?.type === "column") {
-                setColumnOrder((columns) => {
-                  const newOrder = move(columns, event);
-                  const columnIndexAfterMove = newOrder.findIndex(
-                    (col) => col.id === source?.id
-                  );
+              const prevOrder = boardColumns || [];
+              const newOrder = move(prevOrder, event);
 
+              if (newOrder !== prevOrder) {
+                const columnIndexAfterMove = newOrder.findIndex(
+                  (col) => col.id === source?.id
+                );
+
+                if (columnIndexAfterMove !== -1) {
                   const prevCol = newOrder[columnIndexAfterMove - 1];
                   const nextCol = newOrder[columnIndexAfterMove + 1];
                   const newPosition = calculatePosition(
@@ -177,53 +97,87 @@ const Board = ({ userId, boardId }: BoardProps) => {
                     nextCol?.position
                   );
 
-                  return newOrder.map((col) =>
-                    col.id === source?.id
-                      ? { ...col, position: newPosition }
-                      : col
-                  );
-                });
+                  const boardColumnId = source?.data?.id;
+                  const newBoardColumnName = newOrder[columnIndexAfterMove].name;
+
+                  try {
+                    const response = await updateBoardColumn(
+                      userId,
+                      boardColumnId,
+                      newBoardColumnName,
+                      newPosition
+                    );
+                    console.log("Move Column Response:", response);
+                    if (response?.status !== 200)
+                      throw new Error("Failed to move board column");
+                  } catch (err) {
+                    throw err;
+                  }
+                }
               }
               return;
             }
 
             if (source?.type === "card") {
               if (target?.type === "card") {
-                setCards((cards) => {
-                  const newOrder = move(cards, event);
-                  const columnId = Object.keys(newOrder).find((key) =>
-                    newOrder[key].some((card) => card.id === source?.id)
-                  );
+                const newOrder = move(cardsByColumn, event);
+                const columnId = Object.keys(newOrder).find((key) =>
+                  newOrder[key].some((card) => card.id === source?.id)
+                );
 
-                  if (!columnId) return cards;
+                if (!columnId) return cardsByColumn;
 
-                  const cardIndexAfterMove = newOrder[columnId].findIndex(
-                    (card) => card.id === source?.id
-                  );
+                const cardIndexAfterMove = newOrder[columnId].findIndex(
+                  (card) => card.id === source?.id
+                );
 
-                  const prevCard = newOrder[columnId][cardIndexAfterMove - 1];
-                  const nextCard = newOrder[columnId][cardIndexAfterMove + 1];
-                  const newPosition = calculatePosition(
-                    prevCard?.position,
-                    nextCard?.position
-                  );
+                const prevCard = newOrder[columnId][cardIndexAfterMove - 1];
+                const nextCard = newOrder[columnId][cardIndexAfterMove + 1];
+                const newPosition = calculatePosition(
+                  prevCard?.position,
+                  nextCard?.position
+                );
 
-                  return {
-                    ...newOrder,
-                    [columnId]: newOrder[columnId].map((card) =>
-                      card.id === source?.id
-                        ? { ...card, position: newPosition }
-                        : card
-                    ),
-                  };
+                const cardId = source?.data?.id;
+                const newCardName = newOrder[columnId][cardIndexAfterMove].name;
+                const newCardDescription =
+                  newOrder[columnId][cardIndexAfterMove].description;
+
+                console.log("Params:", {
+                  userId,
+                  cardId,
+                  newCardName,
+                  newPosition,
                 });
+
+                try {
+                  const response = await boardService.updateCard(
+                    userId,
+                    cardId,
+                    columnId,
+                    newCardName,
+                    newCardDescription,
+                    newPosition
+                  );
+                  console.log("Move Card Response:", response);
+                  if (response?.status !== 200)
+                    throw new Error("Failed to move board card");
+                } catch (err) {
+                  throw err;
+                }
               }
               return;
             }
           }}
         >
           {board.boardColumns?.map((column, index) => (
-            <BoardColumn key={index} index={index} column={column} />
+            <BoardColumn
+              key={column.id}
+              index={index}
+              column={column}
+              boardId={boardId}
+              userId={userId}
+            />
           ))}
         </DragDropProvider>
         <li className="flex flex-col align-center shrink-0 w-72 min-w-72 h-fit">
@@ -231,11 +185,19 @@ const Board = ({ userId, boardId }: BoardProps) => {
             <AddColumnForm
               userId={userId}
               boardId={boardId}
-              lastpostion={columnOrder[columnOrder.length - 1].position + BOARDS_ENUM.DEFAULT_POSITION}
+              lastpostion={
+                board.boardColumns?.length
+                  ? board.boardColumns[board.boardColumns.length - 1].position +
+                    BOARDS_ENUM.DEFAULT_POSITION
+                  : BOARDS_ENUM.DEFAULT_POSITION
+              }
               onClick={() => setCreatingNewColumn(false)}
             />
           ) : (
-            <AddColumnButton userId={userId} onClick={() => setCreatingNewColumn(true)} />
+            <AddColumnButton
+              userId={userId}
+              onClick={() => setCreatingNewColumn(true)}
+            />
           )}
         </li>
       </ol>

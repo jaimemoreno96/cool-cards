@@ -6,6 +6,7 @@ import {
   BoardColumnResponse,
   NewBoardResponse,
   UpdateBoardResponse,
+  CardResponse,
 } from "../types/boards";
 import { createClient } from "@/app/utils/client";
 import { BaseResponse } from "@/app/types/base";
@@ -117,8 +118,8 @@ const createBoardColumn = async (
 
 const updateBoardColumn = async (
   userId: string,
-  boardId: string,
-  columnId: string,
+  boardColumnId: string,
+  boardColumnName: string,
   newPosition: number
 ): Promise<AxiosResponse<BoardColumnResponse, any>> => {
   try {
@@ -126,8 +127,8 @@ const updateBoardColumn = async (
       "/api/boards/board/column",
       {
         userId,
-        boardId,
-        columnId,
+        boardColumnId,
+        boardColumnName,
         newPosition,
       },
       {
@@ -140,6 +141,70 @@ const updateBoardColumn = async (
     return response;
   } catch (error) {
     console.error("Error moving board column:", error);
+    throw error; // Re-throw the error for further handling if needed
+  }
+};
+
+const createCard = async (
+  userId: string,
+  boardId: string,
+  boardColumnId: string,
+  cardName: string,
+  position: number
+): Promise<AxiosResponse<CardResponse, any>> => {
+  try {
+    const response = await axios.post<CardResponse>(
+      "/api/boards/board/card",
+      {
+        userId,
+        boardId,
+        boardColumnId,
+        cardName,
+        position,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    console.error("Error creating card:", error);
+    throw error; // Re-throw the error for further handling if needed
+  }
+};
+
+const updateCard = async (
+  userId: string,
+  cardId: string,
+  boardColumnId: string,
+  cardName: string,
+  cardDescription: string | null | undefined,
+  position: number
+): Promise<AxiosResponse<BoardColumnResponse, any>> => {
+  try {
+    const response = await axios.put<BoardColumnResponse>(
+      "/api/boards/board/card",
+      {
+        userId,
+        cardId,
+        boardColumnId,
+        cardName,
+        cardDescription,
+        position,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response;
+  } catch (error) {
+    console.error("Error updating card:", error);
     throw error; // Re-throw the error for further handling if needed
   }
 };
@@ -182,6 +247,8 @@ const boardService = {
   updateBoard,
   createBoardColumn,
   updateBoardColumn,
+  createCard,
+  updateCard,
   fetchImages,
   setFavoriteBoard,
 };

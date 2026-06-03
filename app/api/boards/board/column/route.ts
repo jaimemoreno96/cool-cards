@@ -7,14 +7,14 @@ export const POST = async (request: Request) => {
   try {
     const data = await request.json();
 
-    const { userId, boardId, columnName, position } = data;
+    const { userId, boardId, boardColumnName, position } = data;
 
     console.log("Request Data:", data);
 
     const newColumn = await prisma.boardColumn.create({
       data: {
         boardId,
-        name: columnName,
+        name: boardColumnName,
         position,
       },
     });
@@ -46,7 +46,7 @@ export const POST = async (request: Request) => {
 export const PUT = async (request: Request) => {
   try {
     const data = await request.json();
-    const { boardColumnId, boardId, columnName, position } = data;
+    const { boardColumnId, boardColumnName, newPosition: position } = data;
 
     console.log("Request Data:", data);
 
@@ -55,8 +55,7 @@ export const PUT = async (request: Request) => {
         id: boardColumnId,
       },
       data: {
-        boardId,
-        name: columnName,
+        name: boardColumnName,
         position,
       },
     });

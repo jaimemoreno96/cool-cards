@@ -104,6 +104,10 @@ export interface BoardColumnResponse extends BaseResponse {
   boardColumn: BoardColumnDtoType;
 }
 
+export interface CardResponse extends BaseResponse {
+  card: CardDtoType;
+}
+
 export interface CreateBoardData {
   projectId: string;
   favorite: boolean;
