@@ -1,28 +1,44 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { DragDropProvider } from "@dnd-kit/react";
+import { memo, useMemo, useRef, useState } from "react";
+import {
+  DragDropProvider,
+  KeyboardSensor,
+  PointerSensor,
+} from "@dnd-kit/react";
 import { move } from "@dnd-kit/helpers";
 
 import BoardColumn from "./board-column";
+import ColumnPlaceholder from "./column-placeholder";
 import AddColumnButton from "./add-column-button";
 import AddColumnForm from "./add-column-form";
 
 import boardService from "@/app/boards/services/board-service";
 import { useBoard } from "@/app/boards/hooks/use-board";
 
-import { CardDtoType } from "@/app/boards/types/boards";
+import { BoardColumnDtoType, CardDtoType } from "@/app/boards/types/boards";
 import { BOARDS_ENUM } from "@/app/boards/enum";
+import { Feedback } from "@dnd-kit/dom";
 
 interface BoardProps {
   userId: string;
   boardId: string;
 }
-const Board = ({ userId, boardId }: BoardProps) => {
+const Board = memo(({ userId, boardId }: BoardProps) => {
   const [creatingNewColumn, setCreatingNewColumn] = useState<boolean>(false);
-  const { board, updateBoardColumn, boardError, boardIsLoading } =
+  const { board, updateBoardColumn, boardError, boardIsLoading, mutateBoard } =
     useBoard(boardId);
+  const snapshotRef = useRef<BoardColumnDtoType[] | undefined>(undefined);
   console.log("Board:", board);
+
+  const sensors = [
+    PointerSensor.configure({
+      activatorElements(source) {
+        return [source.element, source.handle];
+      },
+    }),
+    KeyboardSensor,
+  ];
 
   const boardColumns = useMemo(
     () =>
@@ -58,19 +74,54 @@ const Board = ({ userId, boardId }: BoardProps) => {
     <div className="h-full w-full">
       <ol className="flex gap-4 h-full overflow-x-auto px-4">
         <DragDropProvider
-          onDragStart={() => {}}
+          sensors={sensors}
+          onDragStart={() => {
+            snapshotRef.current = board.boardColumns?.map((col) => ({
+              ...col,
+              cards: col.cards?.map((card) => ({ ...card })),
+            }));
+          }}
           onDragOver={(event) => {
-            const { source, target } = event.operation;
+            const { source } = event.operation;
 
-            if (source?.data?.id !== target?.data?.id) {
-              console.log("---------------- Drag over events ----------------");
+            if (source?.type === "column") return;
 
-              console.log("Operation source:", source?.data);
-              console.log("Operation target:", target?.data);
-            }
+            mutateBoard((currentData) => {
+              if (!currentData?.boardColumns) return currentData;
+
+              const cardsByColumn = currentData.boardColumns.reduce<
+                Record<string, CardDtoType[]>
+              >((acc, col) => {
+                acc[col.id] = col.cards || [];
+                return acc;
+              }, {});
+
+              const reordered = move(cardsByColumn, event);
+
+              return {
+                ...currentData,
+                boardColumns: currentData.boardColumns.map((col) => ({
+                  ...col,
+                  cards: reordered[col.id] || [],
+                })),
+              };
+            }, false);
           }}
           onDragEnd={async (event) => {
             const { source, target } = event.operation;
+
+            if (event.canceled) {
+              if (snapshotRef.current) {
+                mutateBoard((currentData) => {
+                  if (!currentData) return currentData;
+                  return {
+                    ...currentData,
+                    boardColumns: snapshotRef.current!,
+                  };
+                }, false);
+              }
+              return;
+            }
 
             console.log(source?.id, target?.id);
 
@@ -98,7 +149,8 @@ const Board = ({ userId, boardId }: BoardProps) => {
                   );
 
                   const boardColumnId = source?.data?.id;
-                  const newBoardColumnName = newOrder[columnIndexAfterMove].name;
+                  const newBoardColumnName =
+                    newOrder[columnIndexAfterMove].name;
 
                   try {
                     const response = await updateBoardColumn(
@@ -179,30 +231,30 @@ const Board = ({ userId, boardId }: BoardProps) => {
               userId={userId}
             />
           ))}
+          <ColumnPlaceholder>
+            {creatingNewColumn ? (
+              <AddColumnForm
+                userId={userId}
+                boardId={boardId}
+                lastpostion={
+                  board.boardColumns?.length
+                    ? board.boardColumns[board.boardColumns.length - 1]
+                        .position + BOARDS_ENUM.DEFAULT_POSITION
+                    : BOARDS_ENUM.DEFAULT_POSITION
+                }
+                onClick={() => setCreatingNewColumn(false)}
+              />
+            ) : (
+              <AddColumnButton
+                userId={userId}
+                onClick={() => setCreatingNewColumn(true)}
+              />
+            )}
+          </ColumnPlaceholder>
         </DragDropProvider>
-        <li className="flex flex-col align-center shrink-0 w-72 min-w-72 h-fit">
-          {creatingNewColumn ? (
-            <AddColumnForm
-              userId={userId}
-              boardId={boardId}
-              lastpostion={
-                board.boardColumns?.length
-                  ? board.boardColumns[board.boardColumns.length - 1].position +
-                    BOARDS_ENUM.DEFAULT_POSITION
-                  : BOARDS_ENUM.DEFAULT_POSITION
-              }
-              onClick={() => setCreatingNewColumn(false)}
-            />
-          ) : (
-            <AddColumnButton
-              userId={userId}
-              onClick={() => setCreatingNewColumn(true)}
-            />
-          )}
-        </li>
       </ol>
     </div>
   );
-};
+});
 
 export default Board;
